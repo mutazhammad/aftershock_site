@@ -61,8 +61,8 @@ function SectionTitle({ n, title, sub }: { n: string; title: string; sub?: strin
 }
 
 function EventReport() {
-  const { record } = Route.useLoaderData();
-  const e = record;
+  const data = Route.useLoaderData() as { record: EventRecord };
+  const e: EventRecord = data.record;
   const sourcesAgree = e.sources_agree ?? e.status === "confirmed";
 
   return (
