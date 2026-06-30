@@ -3,9 +3,10 @@ import { Chrome } from "@/components/chokepoint/Chrome";
 import { RecencyBadge, StatusBadge, TypeChip } from "@/components/chokepoint/Badges";
 import { ReactionBar } from "@/components/chokepoint/ReactionBar";
 import { getEvent } from "@/lib/chokepoint-data";
+import type { EventRecord } from "@/lib/chokepoint-types";
 
 export const Route = createFileRoute("/event/$id")({
-  loader: ({ params }) => {
+  loader: ({ params }): { record: EventRecord } => {
     const record = getEvent(params.id);
     if (!record) throw notFound();
     return { record };
