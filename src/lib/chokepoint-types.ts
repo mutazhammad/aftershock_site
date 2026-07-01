@@ -26,6 +26,10 @@ export interface HistoricalRow {
 export interface CompanyAffected {
   ticker: string;
   tone: Exclude<Tone, "neutral">;
+  name?: string;
+  sector?: string;
+  role?: string;
+  move_pct?: string;
 }
 
 export interface CompanyNamed {
@@ -35,6 +39,10 @@ export interface CompanyNamed {
 
 export interface EventRecord {
   id: string;
+  location?: {
+    name: string;
+    region: "gulf" | "taiwan" | "redsea" | "eastern-europe" | "saudi" | "generic";
+  };
   event: {
     name: string;
     information_date: string;
@@ -47,11 +55,39 @@ export interface EventRecord {
   status: Status;
   recency: Recency;
   summary: string;
+  timeline?: TimelineEntry[];
+  timeseries?: TimeSeries;
   reaction: ReactionRow[];
   lasting_finding: string;
   historical: HistoricalRow[];
   companies_affected: CompanyAffected[];
   companies_named: CompanyNamed[];
+  historical_precedents?: HistoricalPrecedent[];
   confidence: string;
   disclaimer: string;
+}
+
+export interface TimelineEntry {
+  datetime: string;
+  headline: string;
+  detail: string;
+  source: string;
+}
+
+export interface TimeSeries {
+  days: number[];
+  series: { sector: string; values: number[] }[];
+  markers: { day: number; label: string }[];
+}
+
+export interface HistoricalPrecedent {
+  id?: string;
+  name: string;
+  date: string;
+  why_similar: string;
+  measured: boolean;
+  mini: {
+    summary: string;
+    key_moves: { label: string; pct: string; timeframe: string; tone: Exclude<Tone, "neutral"> }[];
+  };
 }
