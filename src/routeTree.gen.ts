@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MethodologyRouteImport } from './routes/methodology'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EventIdRouteImport } from './routes/event.$id'
 
+const MethodologyRoute = MethodologyRouteImport.update({
+  id: '/methodology',
+  path: '/methodology',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
@@ -32,35 +38,46 @@ const EventIdRoute = EventIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/events': typeof EventsRoute
+  '/methodology': typeof MethodologyRoute
   '/event/$id': typeof EventIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/events': typeof EventsRoute
+  '/methodology': typeof MethodologyRoute
   '/event/$id': typeof EventIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/events': typeof EventsRoute
+  '/methodology': typeof MethodologyRoute
   '/event/$id': typeof EventIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/events' | '/event/$id'
+  fullPaths: '/' | '/events' | '/methodology' | '/event/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/events' | '/event/$id'
-  id: '__root__' | '/' | '/events' | '/event/$id'
+  to: '/' | '/events' | '/methodology' | '/event/$id'
+  id: '__root__' | '/' | '/events' | '/methodology' | '/event/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EventsRoute: typeof EventsRoute
+  MethodologyRoute: typeof MethodologyRoute
   EventIdRoute: typeof EventIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/methodology': {
+      id: '/methodology'
+      path: '/methodology'
+      fullPath: '/methodology'
+      preLoaderRoute: typeof MethodologyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/events': {
       id: '/events'
       path: '/events'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EventsRoute: EventsRoute,
+  MethodologyRoute: MethodologyRoute,
   EventIdRoute: EventIdRoute,
 }
 export const routeTree = rootRouteImport
