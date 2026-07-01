@@ -1,125 +1,128 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
 import { Chrome } from "@/components/chokepoint/Chrome";
-import { RecencyBadge, StatusBadge, TypeChip } from "@/components/chokepoint/Badges";
-import { EVENTS, EVENT_FAMILIES, type EventFamily } from "@/lib/chokepoint-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Chokepoint — Event feed" },
+      { title: "Chokepoint — Measured, not guessed" },
       {
         name: "description",
         content:
-          "Geopolitical events and their measured impact on financial markets. Decision support, not investment advice.",
+          "Chokepoint measures how major geopolitical events have historically affected financial markets, and flags when the data can't give a reliable answer.",
       },
-      { property: "og:title", content: "Chokepoint — Event feed" },
+      { property: "og:title", content: "Chokepoint" },
       {
         property: "og:description",
-        content: "Geopolitical events and their measured impact on financial markets.",
+        content: "How geopolitical events move markets — measured, not guessed.",
       },
     ],
   }),
-  component: FeedPage,
+  component: LandingPage,
 });
 
-function FeedPage() {
-  const [family, setFamily] = useState<EventFamily>("all");
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  const events = useMemo(() => {
-    const list = family === "all" ? EVENTS : EVENTS.filter((e) => e.event.type_label === family);
-    return list;
-  }, [family]);
-
+function LandingPage() {
   return (
     <Chrome>
-      <div className="mb-6 flex items-end justify-between gap-4">
-        <div>
-          <h1 className="text-[22px] font-semibold tracking-tight">Event feed</h1>
-          <p className="mono mt-1 text-[11px] uppercase tracking-[0.16em] text-text-muted">
-            {events.length} events · newest first
-          </p>
+      {/* Hero */}
+      <section className="border border-hairline bg-panel p-8 md:p-12">
+        <div className="mono text-[10.5px] uppercase tracking-[0.18em] text-amber">
+          Geopolitical market intelligence
         </div>
-        <button
-          onClick={() => setRefreshKey((k) => k + 1)}
-          className="mono border border-hairline bg-panel px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] text-text-secondary transition-colors hover:border-amber/40 hover:text-amber"
-          aria-label="Refresh feed"
-        >
-          ↻ Refresh
-        </button>
-      </div>
+        <h1 className="mt-3 text-[36px] md:text-[52px] font-semibold leading-[1.05] tracking-tight">
+          Chokepoint
+        </h1>
+        <p className="mt-3 text-[16px] md:text-[18px] text-text-primary">
+          How geopolitical events move markets — measured, not guessed.
+        </p>
+        <p className="mt-4 max-w-2xl text-[14px] leading-relaxed text-text-secondary">
+          Chokepoint measures how major geopolitical events have historically affected financial
+          markets, and flags when the data can't give a reliable answer.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link
+            to="/events"
+            className="mono inline-flex items-center gap-2 border border-amber bg-amber/10 px-4 py-2.5 text-[12px] uppercase tracking-[0.16em] text-amber transition-colors hover:bg-amber/20"
+          >
+            View the events →
+          </Link>
+          <Link
+            to="/methodology"
+            className="mono inline-flex items-center gap-2 border border-hairline px-4 py-2.5 text-[12px] uppercase tracking-[0.16em] text-text-secondary transition-colors hover:border-amber/40 hover:text-amber"
+          >
+            How it works
+          </Link>
+        </div>
+      </section>
 
-      {/* Filter bar */}
-      <div className="mb-6 flex flex-wrap items-center gap-2 border-y border-hairline py-3">
-        <span className="mono text-[10px] uppercase tracking-[0.16em] text-text-muted">
-          Family:
-        </span>
-        {EVENT_FAMILIES.map((f) => {
-          const active = f === family;
-          return (
-            <button
-              key={f}
-              onClick={() => setFamily(f)}
-              className={`mono px-2.5 py-1 text-[11px] uppercase tracking-[0.12em] transition-colors ${
-                active
-                  ? "border border-amber/60 bg-amber/10 text-amber"
-                  : "border border-hairline text-text-secondary hover:border-amber/40 hover:text-text-primary"
-              }`}
-            >
-              {f}
-            </button>
-          );
-        })}
-      </div>
-
-      <ul key={refreshKey} className="space-y-3">
-        {events.map((e) => (
-          <li key={e.id}>
-            <Link
-              to="/event/$id"
-              params={{ id: e.id }}
-              className="group block border border-hairline bg-panel p-4 transition-colors hover:border-amber/40"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <TypeChip label={e.event.type_label} />
-                    <StatusBadge status={e.status} />
-                    <RecencyBadge recency={e.recency} />
-                  </div>
-                  <h2 className="mt-2 text-[16px] font-semibold tracking-tight text-text-primary group-hover:text-amber">
-                    {e.event.name}
-                  </h2>
-                  <div className="mono mt-1 text-[11px] text-text-muted">
-                    {e.event.information_date} · {e.sources.join(" · ")}
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 self-center">
-                  {e.event.key_metrics.map((m) => (
-                    <div key={m.label} className="text-right">
-                      <div className="mono text-[9.5px] uppercase tracking-[0.14em] text-text-muted">
-                        {m.label}
-                      </div>
-                      <div
-                        className={`mono text-[14px] font-semibold ${
-                          m.tone === "gain"
-                            ? "text-teal"
-                            : m.tone === "loss"
-                            ? "text-red"
-                            : "text-text-primary"
-                        }`}
-                      >
-                        {m.value}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+      {/* How it works */}
+      <section className="mt-10">
+        <SectionHeader n="01" title="How it works" />
+        <ol className="grid gap-3 md:grid-cols-2">
+          {[
+            { n: "1", t: "A geopolitical event happens.", d: "News breaks — a chokepoint closes, controls are imposed, hostilities escalate." },
+            { n: "2", t: "We measure how each market sector actually moved.", d: "For each sector basket we strip out the overall market's move — isolating the event's effect from noise." },
+            { n: "3", t: "We compare it to how similar past events behaved.", d: "Every measured event is checked against historical precedents with a comparable pattern." },
+            { n: "4", t: "We show what's statistically reliable — and flag what's just noise.", d: "Moves inside normal weekly swings are greyed out. Only clear signals get the full treatment." },
+          ].map((s) => (
+            <li key={s.n} className="border border-hairline bg-panel p-4">
+              <div className="mono text-[10.5px] uppercase tracking-[0.16em] text-amber">
+                Step {s.n}
               </div>
-            </Link>
-          </li>
-        ))}
-      </ul>
+              <div className="mt-1 text-[14.5px] font-semibold text-text-primary">{s.t}</div>
+              <p className="mt-1 text-[13px] leading-relaxed text-text-secondary">{s.d}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* What makes it different */}
+      <section className="mt-10">
+        <SectionHeader n="02" title="What makes it different" />
+        <div className="grid gap-3 md:grid-cols-3">
+          <Card
+            title="Real, measured data"
+            body="Every reaction is a measured percentage move — never opinion, never a forecast."
+          />
+          <Card
+            title="Anchored to when news broke"
+            body="Measurement starts on the information date, not the official announcement. By the time the announcement lands, markets have usually already moved."
+          />
+          <Card
+            title="Openly flags noise"
+            body="When a reaction isn't statistically significant we say so, and grey it out. This tool informs your decision. It does not give investment advice."
+          />
+        </div>
+      </section>
+
+      <section className="mt-10 border border-hairline bg-panel p-5">
+        <p className="mono text-[11px] uppercase tracking-[0.16em] text-text-muted">
+          Ready to look at real events?
+        </p>
+        <Link
+          to="/events"
+          className="mono mt-2 inline-block text-[14px] text-amber hover:underline"
+        >
+          View the events →
+        </Link>
+      </section>
     </Chrome>
+  );
+}
+
+function SectionHeader({ n, title }: { n: string; title: string }) {
+  return (
+    <div className="mb-3 flex items-baseline gap-3 border-b border-hairline pb-2">
+      <span className="mono text-[10px] uppercase tracking-[0.18em] text-text-muted">{n}</span>
+      <h2 className="text-[16px] font-semibold tracking-tight">{title}</h2>
+    </div>
+  );
+}
+
+function Card({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="border border-hairline bg-panel p-4">
+      <div className="text-[14px] font-semibold text-text-primary">{title}</div>
+      <p className="mt-1 text-[13px] leading-relaxed text-text-secondary">{body}</p>
+    </div>
   );
 }
