@@ -4,7 +4,7 @@ import { Chrome } from "@/components/chokepoint/Chrome";
 import { RecencyBadge, StatusBadge, TypeChip } from "@/components/chokepoint/Badges";
 import { EVENTS, EVENT_FAMILIES, type EventFamily } from "@/lib/chokepoint-data";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/events")({
   head: () => ({
     meta: [
       { title: "Chokepoint — Event feed" },
