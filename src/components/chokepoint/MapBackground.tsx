@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 type Region = "gulf" | "taiwan" | "redsea" | "eastern-europe" | "saudi" | "generic";
 
 // Simplified line-art outlines. Coordinates hand-tuned in 0..400 x 0..200 space.
@@ -37,12 +39,27 @@ const PATHS: Record<Region, string[]> = {
 
 export function MapBackground({ region }: { region: Region }) {
   const paths = PATHS[region] ?? PATHS.generic;
+  const [opacity, setOpacity] = useState(1);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      // Fully visible above 60px, fully faded by 400px.
+      const o = Math.max(0, Math.min(1, 1 - (y - 60) / 340));
+      setOpacity(o);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <svg
       viewBox="0 0 400 200"
       preserveAspectRatio="xMidYMid slice"
       aria-hidden
-      className="pointer-events-none absolute inset-0 h-full w-full"
+      className="pointer-events-none absolute inset-0 h-full w-full transition-opacity"
+      style={{ opacity }}
     >
       <defs>
         <linearGradient id="cp-fade" x1="0" y1="0" x2="0" y2="1">

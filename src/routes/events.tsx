@@ -1,8 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Chrome } from "@/components/chokepoint/Chrome";
 import { RecencyBadge, StatusBadge, TypeChip } from "@/components/chokepoint/Badges";
 import { EVENTS, EVENT_FAMILIES, type EventFamily } from "@/lib/chokepoint-data";
+import type { EventRecord } from "@/lib/chokepoint-types";
+
+function sortNewestFirst(list: EventRecord[]): EventRecord[] {
+  return [...list].sort(
+    (a, b) =>
+      new Date(b.event.information_date).getTime() -
+      new Date(a.event.information_date).getTime(),
+  );
+}
 
 export const Route = createFileRoute("/events")({
   head: () => ({
@@ -26,11 +35,35 @@ export const Route = createFileRoute("/events")({
 function FeedPage() {
   const [family, setFamily] = useState<EventFamily>("all");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [flash, setFlash] = useState(false);
+  const [updatedAt, setUpdatedAt] = useState<Date>(() => new Date());
 
   const events = useMemo(() => {
-    const list = family === "all" ? EVENTS : EVENTS.filter((e) => e.event.type_label === family);
-    return list;
-  }, [family]);
+    const list =
+      family === "all" ? EVENTS : EVENTS.filter((e) => e.event.type_label === family);
+    return sortNewestFirst(list);
+    // refreshKey triggers a fresh re-read even if data hasn't changed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [family, refreshKey]);
+
+  useEffect(() => {
+    if (!flash) return;
+    const t = setTimeout(() => setFlash(false), 1400);
+    return () => clearTimeout(t);
+  }, [flash]);
+
+  const handleRefresh = () => {
+    if (loading) return;
+    setLoading(true);
+    // Simulate a brief re-load of the local records so the state change is visible.
+    setTimeout(() => {
+      setRefreshKey((k) => k + 1);
+      setUpdatedAt(new Date());
+      setLoading(false);
+      setFlash(true);
+    }, 450);
+  };
 
   return (
     <Chrome>
@@ -38,16 +71,31 @@ function FeedPage() {
         <div>
           <h1 className="text-[22px] font-semibold tracking-tight">Event feed</h1>
           <p className="mono mt-1 text-[11px] uppercase tracking-[0.16em] text-text-muted">
-            {events.length} events · newest first
+            {events.length} events · newest first · updated{" "}
+            {updatedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
           </p>
         </div>
-        <button
-          onClick={() => setRefreshKey((k) => k + 1)}
-          className="mono border border-hairline bg-panel px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] text-text-secondary transition-colors hover:border-amber/40 hover:text-amber"
-          aria-label="Refresh feed"
-        >
-          ↻ Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          {flash && (
+            <span className="mono border border-teal/40 bg-teal/10 px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-teal transition-opacity">
+              ✓ Updated
+            </span>
+          )}
+          <button
+            onClick={handleRefresh}
+            disabled={loading}
+            className="mono inline-flex items-center gap-2 border border-hairline bg-panel px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] text-text-secondary transition-colors hover:border-amber/40 hover:text-amber disabled:opacity-60"
+            aria-label="Refresh feed"
+          >
+            <span
+              className={`inline-block ${loading ? "animate-spin" : ""}`}
+              aria-hidden
+            >
+              ↻
+            </span>
+            {loading ? "Refreshing…" : "Refresh"}
+          </button>
+        </div>
       </div>
 
       {/* Filter bar */}

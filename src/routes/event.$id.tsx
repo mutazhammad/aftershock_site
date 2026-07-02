@@ -70,6 +70,15 @@ function EventReport() {
   const data = Route.useLoaderData() as { record: EventRecord };
   const e: EventRecord = data.record;
   const sourcesAgree = e.sources_agree ?? e.status === "confirmed";
+  const isBreaking = e.recency === "breaking";
+  const isDeveloping = e.recency === "developing";
+  const hasReactionData = e.reaction && e.reaction.length > 0;
+  const showChart = !isBreaking && !!e.timeseries;
+  const showReactionBars = !isBreaking && hasReactionData;
+  const mentionedList =
+    e.companies_in_news && e.companies_in_news.length > 0
+      ? e.companies_in_news.map((c) => ({ name: c.name, right: c.source }))
+      : e.companies_named.map((c) => ({ name: c.name, right: c.amount }));
 
   return (
     <Chrome>
@@ -144,6 +153,29 @@ function EventReport() {
         <p className="max-w-3xl text-[14.5px] leading-relaxed text-text-primary">{e.summary}</p>
       </section>
 
+      {isBreaking && (
+        <section className="mt-6 border-l-2 border-red bg-red/10 p-4">
+          <div className="mono text-[10px] uppercase tracking-[0.16em] text-red">
+            Market reaction still forming
+          </div>
+          <p className="mt-1 text-[13px] leading-relaxed text-text-primary">
+            Full analysis appears as price data matures. Below you'll find the timeline and
+            companies mentioned in reporting.
+          </p>
+        </section>
+      )}
+      {isDeveloping && (
+        <section className="mt-6 border-l-2 border-amber bg-amber/10 p-4">
+          <div className="mono text-[10px] uppercase tracking-[0.16em] text-amber">
+            Developing — provisional numbers
+          </div>
+          <p className="mt-1 text-[13px] leading-relaxed text-text-primary">
+            Partial reaction shown. Significance flags on t-stats are marked provisional and may
+            change as more price data accumulates.
+          </p>
+        </section>
+      )}
+
       {/* 2b. TIMELINE */}
       {e.timeline && e.timeline.length > 0 && (
         <section className="mt-10">
@@ -182,7 +214,7 @@ function EventReport() {
       <section className="mt-10">
         <SectionTitle n="04" title="Market reaction" sub="vs S&P 500" />
 
-        {e.timeseries && (
+        {showChart && e.timeseries && (
           <div className="mb-4">
             <TimeseriesChart ts={e.timeseries} />
             <p className="mono mt-2 text-[10.5px] text-text-muted">
@@ -191,35 +223,48 @@ function EventReport() {
           </div>
         )}
 
-        <div className="border border-hairline bg-panel">
-          <div className="hidden md:grid grid-cols-12 gap-3 border-b border-hairline px-3 py-2">
-            <div className="col-span-4 mono text-[9.5px] uppercase tracking-[0.16em] text-text-muted">
-              Sector / basket
-            </div>
-            <div className="col-span-5 mono text-[9.5px] uppercase tracking-[0.16em] text-text-muted">
-              <div className="flex justify-between">
-                <span>← loss</span>
-                <span>0</span>
-                <span>gain →</span>
+        {showReactionBars ? (
+          <div className="border border-hairline bg-panel">
+            <div className="hidden md:grid grid-cols-12 gap-3 border-b border-hairline px-3 py-2">
+              <div className="col-span-4 mono text-[9.5px] uppercase tracking-[0.16em] text-text-muted">
+                Sector / basket
+              </div>
+              <div className="col-span-5 mono text-[9.5px] uppercase tracking-[0.16em] text-text-muted">
+                <div className="flex justify-between">
+                  <span>← loss</span>
+                  <span>0</span>
+                  <span>gain →</span>
+                </div>
+              </div>
+              <div className="col-span-3 mono text-[9.5px] uppercase tracking-[0.16em] text-text-muted text-right">
+                First-week move · significance
               </div>
             </div>
-            <div className="col-span-3 mono text-[9.5px] uppercase tracking-[0.16em] text-text-muted text-right">
-              First-week move · significance
-            </div>
+            {e.reaction.map((r) => (
+              <ReactionBar
+                key={r.sector}
+                row={isDeveloping ? { ...r, provisional: true } : r}
+              />
+            ))}
           </div>
-          {e.reaction.map((r) => (
-            <ReactionBar key={r.sector} row={r} />
-          ))}
-        </div>
+        ) : (
+          <div className="border border-dashed border-hairline bg-panel/50 p-6 text-center">
+            <p className="mono text-[11px] uppercase tracking-[0.14em] text-text-muted">
+              Reaction chart unavailable — data still forming
+            </p>
+          </div>
+        )}
 
-        <div className="mt-4 border-l-2 border-amber bg-amber/5 p-4">
-          <div className="mono text-[10px] uppercase tracking-[0.16em] text-amber">
-            Lasting finding
+        {!isBreaking && (
+          <div className="mt-4 border-l-2 border-amber bg-amber/5 p-4">
+            <div className="mono text-[10px] uppercase tracking-[0.16em] text-amber">
+              Lasting finding
+            </div>
+            <p className="mt-1 text-[13.5px] leading-relaxed text-text-primary">
+              {e.lasting_finding}
+            </p>
           </div>
-          <p className="mt-1 text-[13.5px] leading-relaxed text-text-primary">
-            {e.lasting_finding}
-          </p>
-        </div>
+        )}
       </section>
 
       {/* 5. HISTORICAL CONTEXT */}
@@ -253,17 +298,23 @@ function EventReport() {
 
       {/* 6. COMPANIES */}
       <section className="mt-10 grid gap-6 md:grid-cols-2">
-        <div>
-          <SectionTitle n="06a" title="Companies most affected" />
-          <CompanyCards items={e.companies_affected} />
-        </div>
-        <div>
-          <SectionTitle n="06b" title="Companies named in the conflict" />
+        {!isBreaking && (
+          <div>
+            <SectionTitle n="06a" title="Companies most affected" sub="measured moves" />
+            <CompanyCards items={e.companies_affected} />
+          </div>
+        )}
+        <div className={isBreaking ? "md:col-span-2" : ""}>
+          <SectionTitle
+            n={isBreaking ? "06" : "06b"}
+            title="Companies mentioned in reporting"
+            sub="named in coverage — NOT a measured market move"
+          />
           <ul className="divide-y divide-hairline border border-hairline">
-            {e.companies_named.map((c) => (
+            {mentionedList.map((c) => (
               <li key={c.name} className="flex items-center justify-between px-3 py-2">
                 <span className="text-[13px] text-text-primary">{c.name}</span>
-                <span className="mono text-[12.5px] text-text-secondary">{c.amount}</span>
+                <span className="mono text-[11.5px] text-text-muted">{c.right}</span>
               </li>
             ))}
           </ul>

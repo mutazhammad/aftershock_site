@@ -14,6 +14,8 @@ export interface ReactionRow {
   pct: string;
   significant: boolean;
   tone: Exclude<Tone, "neutral">;
+  t_stat?: number;
+  provisional?: boolean;
 }
 
 export interface HistoricalRow {
@@ -35,6 +37,11 @@ export interface CompanyAffected {
 export interface CompanyNamed {
   name: string;
   amount: string;
+}
+
+export interface CompanyInNews {
+  name: string;
+  source: string;
 }
 
 export interface EventRecord {
@@ -62,6 +69,7 @@ export interface EventRecord {
   historical: HistoricalRow[];
   companies_affected: CompanyAffected[];
   companies_named: CompanyNamed[];
+  companies_in_news?: CompanyInNews[];
   historical_precedents?: HistoricalPrecedent[];
   confidence: string;
   disclaimer: string;
@@ -89,5 +97,9 @@ export interface HistoricalPrecedent {
   mini: {
     summary: string;
     key_moves: { label: string; pct: string; timeframe: string; tone: Exclude<Tone, "neutral"> }[];
+    moves?: { label: string; pct: string; t_stat?: number; tone: Exclude<Tone, "neutral"> }[];
+    timeseries?: TimeSeries;
+    consistency?: string;
+    confounding_note?: string;
   };
 }

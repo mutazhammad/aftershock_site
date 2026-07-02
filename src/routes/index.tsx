@@ -28,15 +28,13 @@ function LandingPage() {
         <div className="mono text-[10.5px] uppercase tracking-[0.18em] text-amber">
           Geopolitical market intelligence
         </div>
-        <h1 className="mt-3 text-[36px] md:text-[52px] font-semibold leading-[1.05] tracking-tight">
-          Chokepoint
+        <h1 className="mt-3 text-[36px] md:text-[56px] font-semibold leading-[1.02] tracking-tight">
+          Panic is not a strategy.
         </h1>
-        <p className="mt-3 text-[16px] md:text-[18px] text-text-primary">
-          How geopolitical events move markets — measured, not guessed.
-        </p>
-        <p className="mt-4 max-w-2xl text-[14px] leading-relaxed text-text-secondary">
-          Chokepoint measures how major geopolitical events have historically affected financial
-          markets, and flags when the data can't give a reliable answer.
+        <p className="mt-4 max-w-3xl text-[15px] md:text-[17px] leading-relaxed text-text-primary">
+          When war, sanctions, or a blockade rattles the market, Chokepoint shows you which sectors
+          win, which lose, and what history says happens next, so your next move is informed
+          instead of reactive.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
@@ -78,19 +76,12 @@ function LandingPage() {
       {/* What makes it different */}
       <section className="mt-10">
         <SectionHeader n="02" title="What makes it different" />
-        <div className="grid gap-3 md:grid-cols-3">
-          <Card
-            title="Real, measured data"
-            body="Every reaction is a measured percentage move — never opinion, never a forecast."
-          />
-          <Card
-            title="Anchored to when news broke"
-            body="Measurement starts on the information date, not the official announcement. By the time the announcement lands, markets have usually already moved."
-          />
-          <Card
-            title="Openly flags noise"
-            body="When a reaction isn't statistically significant we say so, and grey it out. This tool informs your decision. It does not give investment advice."
-          />
+        <div className="border border-hairline bg-panel p-5 md:p-6">
+          <p className="max-w-3xl text-[14.5px] leading-relaxed text-text-primary">
+            Chokepoint only shows what the data actually supports: real measured reactions, not
+            guesses. When an event's market impact is too unclear to call, it tells you that too.
+            <span className="text-text-secondary"> No hype, no false certainty.</span>
+          </p>
         </div>
       </section>
 
@@ -118,11 +109,3 @@ function SectionHeader({ n, title }: { n: string; title: string }) {
   );
 }
 
-function Card({ title, body }: { title: string; body: string }) {
-  return (
-    <div className="border border-hairline bg-panel p-4">
-      <div className="text-[14px] font-semibold text-text-primary">{title}</div>
-      <p className="mt-1 text-[13px] leading-relaxed text-text-secondary">{body}</p>
-    </div>
-  );
-}
