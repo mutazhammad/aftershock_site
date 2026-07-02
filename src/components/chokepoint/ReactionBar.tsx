@@ -12,7 +12,9 @@ export function ReactionBar({ row }: { row: ReactionRow }) {
   const abs = Math.min(Math.abs(pctNum), MAX);
   const widthPct = (abs / MAX) * 50; // each side is 50% of the bar width
   const isGain = row.tone === "gain";
-  const sig = row.significant;
+  // Derive significance from t_stat when present (|t| >= 2); fall back to explicit flag.
+  const sig =
+    typeof row.t_stat === "number" ? Math.abs(row.t_stat) >= 2 : row.significant;
 
   const barColor = isGain
     ? sig
@@ -64,15 +66,23 @@ export function ReactionBar({ row }: { row: ReactionRow }) {
         >
           {row.pct}
         </span>
-        {sig ? (
-          <span className="mono border border-amber/40 bg-amber/10 px-1.5 py-0.5 text-[9px] uppercase tracking-[0.14em] text-amber">
-            significant
-          </span>
-        ) : (
-          <span className="mono border border-hairline px-1.5 py-0.5 text-[9px] uppercase tracking-[0.14em] text-text-muted">
-            not significant
-          </span>
-        )}
+        <div className="flex flex-col items-end gap-0.5">
+          {sig ? (
+            <span className="mono border border-amber/40 bg-amber/10 px-1.5 py-0.5 text-[9px] uppercase tracking-[0.14em] text-amber">
+              significant
+            </span>
+          ) : (
+            <span className="mono border border-hairline px-1.5 py-0.5 text-[9px] uppercase tracking-[0.14em] text-text-muted">
+              not significant
+            </span>
+          )}
+          {typeof row.t_stat === "number" && (
+            <span className="mono text-[9px] text-text-muted">
+              t={row.t_stat.toFixed(2)}
+              {row.provisional ? " · provisional" : ""}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
