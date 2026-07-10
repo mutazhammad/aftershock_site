@@ -8,10 +8,10 @@ export function Chrome({ children }: { children: ReactNode }) {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4">
           <Link to="/" className="flex items-center gap-3 min-w-0">
             <div className="flex h-7 w-7 shrink-0 items-center justify-center border border-amber/60 text-amber mono text-[11px] font-semibold">
-              CP
+              AS
             </div>
             <div className="leading-tight min-w-0">
-              <div className="text-[15px] font-semibold tracking-tight truncate">Chokepoint</div>
+              <div className="text-[15px] font-semibold tracking-tight truncate">Aftershock</div>
               <div className="mono text-[10px] uppercase tracking-[0.16em] text-text-muted truncate">
                 Geopolitical market intelligence
               </div>
