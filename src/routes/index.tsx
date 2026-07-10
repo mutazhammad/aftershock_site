@@ -4,13 +4,13 @@ import { Chrome } from "@/components/chokepoint/Chrome";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Chokepoint — Measured, not guessed" },
+      { title: "Aftershock — Panic is not a strategy" },
       {
         name: "description",
         content:
-          "Chokepoint measures how major geopolitical events have historically affected financial markets, and flags when the data can't give a reliable answer.",
+          "Aftershock shows how war, sanctions, and blockades have moved markets — measured, not guessed.",
       },
-      { property: "og:title", content: "Chokepoint" },
+      { property: "og:title", content: "Aftershock" },
       {
         property: "og:description",
         content: "How geopolitical events move markets — measured, not guessed.",
@@ -32,9 +32,9 @@ function LandingPage() {
           Panic is not a strategy.
         </h1>
         <p className="mt-4 max-w-3xl text-[15px] md:text-[17px] leading-relaxed text-text-primary">
-          When war, sanctions, or a blockade rattles the market, Chokepoint shows you which sectors
-          win, which lose, and what history says happens next, so your next move is informed
-          instead of reactive.
+          When war, sanctions, or a blockade rattles the market, Aftershock shows you which
+          sectors win, which lose, and what history says happens next, so your next move is
+          informed instead of reactive.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
@@ -78,7 +78,7 @@ function LandingPage() {
         <SectionHeader n="02" title="What makes it different" />
         <div className="border border-hairline bg-panel p-5 md:p-6">
           <p className="max-w-3xl text-[14.5px] leading-relaxed text-text-primary">
-            Chokepoint only shows what the data actually supports: real measured reactions, not
+            Aftershock only shows what the data actually supports: real measured reactions, not
             guesses. When an event's market impact is too unclear to call, it tells you that too.
             <span className="text-text-secondary"> No hype, no false certainty.</span>
           </p>

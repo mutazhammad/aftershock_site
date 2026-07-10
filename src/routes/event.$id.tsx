@@ -6,14 +6,14 @@ import { Timeline } from "@/components/chokepoint/Timeline";
 import { TimeseriesChart } from "@/components/chokepoint/TimeseriesChart";
 import { CompanyCards } from "@/components/chokepoint/CompanyCards";
 import { PrecedentsList } from "@/components/chokepoint/PrecedentsList";
-import { MapBackground } from "@/components/chokepoint/MapBackground";
+import { MapBackgroundGeo } from "@/components/chokepoint/MapBackgroundGeo";
 import { InfoTooltip } from "@/components/chokepoint/InfoTooltip";
-import { getEvent } from "@/lib/chokepoint-data";
+import { fetchEvent } from "@/lib/aftershock-api";
 import type { EventRecord } from "@/lib/chokepoint-types";
 
 export const Route = createFileRoute("/event/$id")({
-  loader: ({ params }): { record: EventRecord } => {
-    const record = getEvent(params.id);
+  loader: async ({ params }): Promise<{ record: EventRecord }> => {
+    const record = await fetchEvent(params.id);
     if (!record) throw notFound();
     return { record };
   },
@@ -21,9 +21,9 @@ export const Route = createFileRoute("/event/$id")({
     const name = loaderData?.record.event.name ?? "Event";
     return {
       meta: [
-        { title: `${name} — Chokepoint` },
+        { title: `${name} — Aftershock` },
         { name: "description", content: `Measured market reaction to ${name}.` },
-        { property: "og:title", content: `${name} — Chokepoint` },
+        { property: "og:title", content: `${name} — Aftershock` },
         { property: "og:description", content: `Measured market reaction to ${name}.` },
       ],
     };
@@ -68,17 +68,20 @@ function SectionTitle({ n, title, sub }: { n: string; title: string; sub?: strin
 
 function EventReport() {
   const data = Route.useLoaderData() as { record: EventRecord };
-  const e: EventRecord = data.record;
+  const e = data.record;
   const sourcesAgree = e.sources_agree ?? e.status === "confirmed";
   const isBreaking = e.recency === "breaking";
   const isDeveloping = e.recency === "developing";
   const hasReactionData = e.reaction && e.reaction.length > 0;
-  const showChart = !isBreaking && !!e.timeseries;
+  const hasTimeseries =
+    !!e.timeseries && e.timeseries.series.some((s) => (s.values ?? []).length > 0);
+  const showChart = !isBreaking && hasTimeseries;
   const showReactionBars = !isBreaking && hasReactionData;
-  const mentionedList =
-    e.companies_in_news && e.companies_in_news.length > 0
+
+  const inNews =
+    (e.companies_in_news && e.companies_in_news.length > 0
       ? e.companies_in_news.map((c) => ({ name: c.name, right: c.source }))
-      : e.companies_named.map((c) => ({ name: c.name, right: c.amount }));
+      : (e.companies_named ?? []).map((c) => ({ name: c.name, right: c.amount }))) ?? [];
 
   return (
     <Chrome>
@@ -89,16 +92,17 @@ function EventReport() {
         ← Event feed
       </Link>
 
-      {/* 1. HEADER with faint map background */}
       <section className="relative overflow-hidden border border-hairline bg-panel">
-        {e.location && <MapBackground region={e.location.region} />}
+        {e.location && (
+          <MapBackgroundGeo center={e.location.center} zoom={e.location.zoom} />
+        )}
         <div className="relative">
           <div className="border-b border-hairline p-5">
             <div className="flex flex-wrap items-center gap-2">
-              <TypeChip label={e.event.type_label} />
+              {e.event.type_label && <TypeChip label={e.event.type_label} />}
               <StatusBadge status={e.status} />
               <RecencyBadge recency={e.recency} />
-              {e.location && (
+              {e.location?.name && (
                 <span className="mono text-[10.5px] uppercase tracking-[0.14em] text-text-muted">
                   · {e.location.name}
                 </span>
@@ -107,51 +111,63 @@ function EventReport() {
             <h1 className="mt-3 text-[26px] font-semibold leading-tight tracking-tight">
               {e.event.name}
             </h1>
-            <p className="mono mt-2 text-[12px] text-text-secondary">
-              Measured from <span className="text-text-primary">{e.event.information_date}</span>{" "}
-              (event start), not the{" "}
-              <span className="text-text-primary">{e.event.announcement_date}</span> announcement
-            </p>
+            {e.event.information_date && (
+              <p className="mono mt-2 text-[12px] text-text-secondary">
+                Measured from <span className="text-text-primary">{e.event.information_date}</span>{" "}
+                (event start)
+                {e.event.announcement_date && (
+                  <>
+                    , not the{" "}
+                    <span className="text-text-primary">{e.event.announcement_date}</span>{" "}
+                    announcement
+                  </>
+                )}
+              </p>
+            )}
           </div>
 
-          <div className="grid grid-cols-2 divide-x divide-hairline">
-            {e.event.key_metrics.map((m) => (
-              <div key={m.label} className="p-5">
-                <div className="mono text-[10px] uppercase tracking-[0.16em] text-text-muted">
-                  {m.label}
+          {e.event.key_metrics && e.event.key_metrics.length > 0 && (
+            <div className="grid grid-cols-2 divide-x divide-hairline">
+              {e.event.key_metrics.slice(0, 2).map((m) => (
+                <div key={m.label} className="p-5">
+                  <div className="mono text-[10px] uppercase tracking-[0.16em] text-text-muted">
+                    {m.label}
+                  </div>
+                  <div
+                    className={`mono mt-1 text-[28px] font-semibold leading-none ${
+                      m.tone === "gain"
+                        ? "text-teal"
+                        : m.tone === "loss"
+                        ? "text-red"
+                        : "text-text-primary"
+                    }`}
+                  >
+                    {m.value}
+                  </div>
                 </div>
-                <div
-                  className={`mono mt-1 text-[28px] font-semibold leading-none ${
-                    m.tone === "gain"
-                      ? "text-teal"
-                      : m.tone === "loss"
-                      ? "text-red"
-                      : "text-text-primary"
-                  }`}
-                >
-                  {m.value}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
-          <div className="border-t border-hairline p-4">
-            <p className="mono text-[11.5px] text-text-secondary">
-              Reported by{" "}
-              <span className="text-text-primary">{e.sources.join(", ")}</span> —{" "}
-              <span className={sourcesAgree ? "text-teal" : "text-amber"}>
-                {sourcesAgree ? "multiple sources agree" : "sources disagree"}
-              </span>
-            </p>
-          </div>
+          {e.sources && e.sources.length > 0 && (
+            <div className="border-t border-hairline p-4">
+              <p className="mono text-[11.5px] text-text-secondary">
+                Reported by <span className="text-text-primary">{e.sources.join(", ")}</span> —{" "}
+                <span className={sourcesAgree ? "text-teal" : "text-amber"}>
+                  {sourcesAgree ? "multiple sources agree" : "sources disagree"}
+                </span>
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* 2. SUMMARY */}
-      <section className="mt-10">
-        <SectionTitle n="01" title="Summary" />
-        <p className="max-w-3xl text-[14.5px] leading-relaxed text-text-primary">{e.summary}</p>
-      </section>
+      {e.summary && (
+        <section className="mt-10">
+          <SectionTitle n="01" title="Summary" />
+          <p className="max-w-3xl text-[14.5px] leading-relaxed text-text-primary">{e.summary}</p>
+        </section>
+      )}
 
       {isBreaking && (
         <section className="mt-6 border-l-2 border-red bg-red/10 p-4">
@@ -170,13 +186,12 @@ function EventReport() {
             Developing — provisional numbers
           </div>
           <p className="mt-1 text-[13px] leading-relaxed text-text-primary">
-            Partial reaction shown. Significance flags on t-stats are marked provisional and may
-            change as more price data accumulates.
+            Partial reaction shown. Significance flags are marked provisional and may change as
+            more price data accumulates.
           </p>
         </section>
       )}
 
-      {/* 2b. TIMELINE */}
       {e.timeline && e.timeline.length > 0 && (
         <section className="mt-10">
           <SectionTitle n="02" title="Event timeline" sub="key moments" />
@@ -184,7 +199,6 @@ function EventReport() {
         </section>
       )}
 
-      {/* 3. HOW TO READ */}
       <section className="mt-10">
         <SectionTitle n="03" title="How to read this" />
         <div className="border border-hairline bg-panel p-4">
@@ -210,132 +224,143 @@ function EventReport() {
         </div>
       </section>
 
-      {/* 4. MARKET REACTION — chart above bars */}
-      <section className="mt-10">
-        <SectionTitle n="04" title="Market reaction" sub="vs S&P 500" />
+      {(showChart || showReactionBars) && (
+        <section className="mt-10">
+          <SectionTitle n="04" title="Market reaction" sub="vs S&P 500" />
 
-        {showChart && e.timeseries && (
-          <div className="mb-4">
-            <TimeseriesChart ts={e.timeseries} />
-            <p className="mono mt-2 text-[10.5px] text-text-muted">
-              Path over time. Click a sector in the legend to toggle it. Dashed lines mark key moments.
-            </p>
-          </div>
-        )}
+          {showChart && e.timeseries && (
+            <div className="mb-4">
+              <TimeseriesChart ts={e.timeseries} />
+              <p className="mono mt-2 text-[10.5px] text-text-muted">
+                Path over time. Click a sector in the legend to toggle it. Dashed lines mark key moments.
+              </p>
+            </div>
+          )}
 
-        {showReactionBars ? (
-          <div className="border border-hairline bg-panel">
-            <div className="hidden md:grid grid-cols-12 gap-3 border-b border-hairline px-3 py-2">
-              <div className="col-span-4 mono text-[9.5px] uppercase tracking-[0.16em] text-text-muted">
-                Sector / basket
-              </div>
-              <div className="col-span-5 mono text-[9.5px] uppercase tracking-[0.16em] text-text-muted">
-                <div className="flex justify-between">
-                  <span>← loss</span>
-                  <span>0</span>
-                  <span>gain →</span>
+          {showReactionBars ? (
+            <div className="border border-hairline bg-panel">
+              <div className="hidden md:grid grid-cols-12 gap-3 border-b border-hairline px-3 py-2">
+                <div className="col-span-4 mono text-[9.5px] uppercase tracking-[0.16em] text-text-muted">
+                  Sector / basket
+                </div>
+                <div className="col-span-5 mono text-[9.5px] uppercase tracking-[0.16em] text-text-muted">
+                  <div className="flex justify-between">
+                    <span>← loss</span>
+                    <span>0</span>
+                    <span>gain →</span>
+                  </div>
+                </div>
+                <div className="col-span-3 mono text-[9.5px] uppercase tracking-[0.16em] text-text-muted text-right">
+                  First-week move · significance
                 </div>
               </div>
-              <div className="col-span-3 mono text-[9.5px] uppercase tracking-[0.16em] text-text-muted text-right">
-                First-week move · significance
-              </div>
-            </div>
-            {e.reaction.map((r) => (
-              <ReactionBar
-                key={r.sector}
-                row={isDeveloping ? { ...r, provisional: true } : r}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="border border-dashed border-hairline bg-panel/50 p-6 text-center">
-            <p className="mono text-[11px] uppercase tracking-[0.14em] text-text-muted">
-              Reaction chart unavailable — data still forming
-            </p>
-          </div>
-        )}
-
-        {!isBreaking && (
-          <div className="mt-4 border-l-2 border-amber bg-amber/5 p-4">
-            <div className="mono text-[10px] uppercase tracking-[0.16em] text-amber">
-              Lasting finding
-            </div>
-            <p className="mt-1 text-[13.5px] leading-relaxed text-text-primary">
-              {e.lasting_finding}
-            </p>
-          </div>
-        )}
-      </section>
-
-      {/* 5. HISTORICAL CONTEXT */}
-      <section className="mt-10">
-        <SectionTitle n="05" title="Historical context" sub="usual pattern vs this event" />
-        <div className="overflow-x-auto border border-hairline">
-          <table className="w-full text-left text-[13px]">
-            <thead className="bg-panel">
-              <tr className="border-b border-hairline">
-                <th className="mono px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-text-muted font-normal">Sector</th>
-                <th className="mono px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-text-muted font-normal">Usual pattern</th>
-                <th className="mono px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-text-muted font-normal">This event</th>
-                <th className="mono px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-text-muted font-normal text-center">Match</th>
-              </tr>
-            </thead>
-            <tbody>
-              {e.historical.map((h) => (
-                <tr key={h.sector} className="border-b border-hairline/60 last:border-b-0">
-                  <td className="px-4 py-2.5 text-text-primary">{h.sector}</td>
-                  <td className="px-4 py-2.5 text-text-secondary">{h.usual}</td>
-                  <td className="px-4 py-2.5 text-text-secondary">{h.this_event}</td>
-                  <td className="px-4 py-2.5 text-center">
-                    {h.match ? <span className="mono text-teal">✓</span> : <span className="mono text-text-muted">—</span>}
-                  </td>
-                </tr>
+              {e.reaction.map((r) => (
+                <ReactionBar
+                  key={r.sector}
+                  row={isDeveloping ? { ...r, provisional: true } : r}
+                />
               ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+            </div>
+          ) : (
+            !showChart && (
+              <div className="border border-dashed border-hairline bg-panel/50 p-6 text-center">
+                <p className="mono text-[11px] uppercase tracking-[0.14em] text-text-muted">
+                  Reaction chart unavailable — data still forming
+                </p>
+              </div>
+            )
+          )}
 
-      {/* 6. COMPANIES */}
-      <section className="mt-10 grid gap-6 md:grid-cols-2">
-        {!isBreaking && (
-          <div>
-            <SectionTitle n="06a" title="Companies most affected" sub="measured moves" />
-            <CompanyCards items={e.companies_affected} />
+          {!isBreaking && e.lasting_finding && (
+            <div className="mt-4 border-l-2 border-amber bg-amber/5 p-4">
+              <div className="mono text-[10px] uppercase tracking-[0.16em] text-amber">
+                Lasting finding
+              </div>
+              <p className="mt-1 text-[13.5px] leading-relaxed text-text-primary">
+                {e.lasting_finding}
+              </p>
+            </div>
+          )}
+        </section>
+      )}
+
+      {e.historical && e.historical.length > 0 && (
+        <section className="mt-10">
+          <SectionTitle n="05" title="Historical context" sub="usual pattern vs this event" />
+          <div className="overflow-x-auto border border-hairline">
+            <table className="w-full text-left text-[13px]">
+              <thead className="bg-panel">
+                <tr className="border-b border-hairline">
+                  <th className="mono px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-text-muted font-normal">Sector</th>
+                  <th className="mono px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-text-muted font-normal">Usual pattern</th>
+                  <th className="mono px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-text-muted font-normal">This event</th>
+                  <th className="mono px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-text-muted font-normal text-center">Match</th>
+                </tr>
+              </thead>
+              <tbody>
+                {e.historical.map((h) => (
+                  <tr key={h.sector} className="border-b border-hairline/60 last:border-b-0">
+                    <td className="px-4 py-2.5 text-text-primary">{h.sector}</td>
+                    <td className="px-4 py-2.5 text-text-secondary">{h.usual}</td>
+                    <td className="px-4 py-2.5 text-text-secondary">{h.this_event}</td>
+                    <td className="px-4 py-2.5 text-center">
+                      {h.match ? <span className="mono text-teal">✓</span> : <span className="mono text-text-muted">—</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}
-        <div className={isBreaking ? "md:col-span-2" : ""}>
-          <SectionTitle
-            n={isBreaking ? "06" : "06b"}
-            title="Companies mentioned in reporting"
-            sub="named in coverage — NOT a measured market move"
-          />
-          <ul className="divide-y divide-hairline border border-hairline">
-            {mentionedList.map((c) => (
-              <li key={c.name} className="flex items-center justify-between px-3 py-2">
-                <span className="text-[13px] text-text-primary">{c.name}</span>
-                <span className="mono text-[11.5px] text-text-muted">{c.right}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* 7. HISTORICAL PRECEDENTS */}
       {e.historical_precedents && e.historical_precedents.length > 0 && (
         <section className="mt-10">
-          <SectionTitle n="07" title="Historical precedents" sub="click to expand" />
+          <SectionTitle n="06" title="Historical precedents" sub="click to expand" />
           <PrecedentsList items={e.historical_precedents} />
         </section>
       )}
 
-      {/* 8. CONFIDENCE + DISCLAIMER */}
+      <section className="mt-10 grid gap-6 md:grid-cols-2">
+        {!isBreaking && e.companies_affected && e.companies_affected.length > 0 && (
+          <div>
+            <SectionTitle n="07a" title="Companies most affected" sub="measured moves" />
+            <CompanyCards items={e.companies_affected} />
+          </div>
+        )}
+        {inNews.length > 0 && (
+          <div
+            className={
+              isBreaking || !e.companies_affected?.length ? "md:col-span-2" : ""
+            }
+          >
+            <SectionTitle
+              n={isBreaking || !e.companies_affected?.length ? "07" : "07b"}
+              title="Companies mentioned in reporting"
+              sub="named in coverage — NOT a measured market move"
+            />
+            <ul className="divide-y divide-hairline border border-hairline">
+              {inNews.map((c) => (
+                <li key={c.name} className="flex items-center justify-between px-3 py-2">
+                  <span className="text-[13px] text-text-primary">{c.name}</span>
+                  <span className="mono text-[11.5px] text-text-muted">{c.right}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </section>
+
       <section className="mt-10 border border-hairline bg-panel p-5">
-        <div className="mono text-[10px] uppercase tracking-[0.16em] text-text-muted">
-          Confidence
-        </div>
-        <p className="mt-1 text-[13px] leading-relaxed text-text-secondary">{e.confidence}</p>
-        <div className="mt-4 border-t border-hairline pt-3">
+        {e.confidence && (
+          <>
+            <div className="mono text-[10px] uppercase tracking-[0.16em] text-text-muted">
+              Confidence
+            </div>
+            <p className="mt-1 text-[13px] leading-relaxed text-text-secondary">{e.confidence}</p>
+          </>
+        )}
+        <div className={`${e.confidence ? "mt-4 border-t border-hairline pt-3" : ""}`}>
           <p className="mono text-[11px] text-text-muted">{e.disclaimer}</p>
         </div>
       </section>

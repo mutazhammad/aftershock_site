@@ -48,7 +48,9 @@ export interface EventRecord {
   id: string;
   location?: {
     name: string;
-    region: "gulf" | "taiwan" | "redsea" | "eastern-europe" | "saudi" | "generic";
+    region: string;
+    center?: [number, number];
+    zoom?: number;
   };
   event: {
     name: string;
