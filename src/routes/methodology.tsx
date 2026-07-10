@@ -4,13 +4,13 @@ import { Chrome } from "@/components/chokepoint/Chrome";
 export const Route = createFileRoute("/methodology")({
   head: () => ({
     meta: [
-      { title: "Methodology — Chokepoint" },
+      { title: "Methodology — Aftershock" },
       {
         name: "description",
         content:
-          "How Chokepoint measures market reactions to geopolitical events using event studies, information-date anchoring, and significance filtering.",
+          "How Aftershock measures market reactions to geopolitical events using event studies, information-date anchoring, and significance filtering.",
       },
-      { property: "og:title", content: "Methodology — Chokepoint" },
+      { property: "og:title", content: "Methodology — Aftershock" },
       {
         property: "og:description",
         content: "Event studies, information-date anchoring, significance filtering, and honesty principles.",
@@ -39,9 +39,9 @@ function MethodologyPage() {
     <Chrome>
       <div className="border border-hairline bg-panel p-6">
         <div className="mono text-[10.5px] uppercase tracking-[0.18em] text-amber">Methodology</div>
-        <h1 className="mt-2 text-[28px] font-semibold tracking-tight">How Chokepoint measures market reactions</h1>
+        <h1 className="mt-2 text-[28px] font-semibold tracking-tight">How Aftershock measures market reactions</h1>
         <p className="mt-3 max-w-3xl text-[14px] leading-relaxed text-text-secondary">
-          Chokepoint is built around one idea: geopolitical shocks leave a measurable fingerprint on
+          Aftershock is built around one idea: geopolitical shocks leave a measurable fingerprint on
           markets, and honesty about what we do and don't know is more useful than a confident guess.
         </p>
       </div>
@@ -84,7 +84,7 @@ function MethodologyPage() {
           ordinary week-to-week variation.
         </p>
         <p>
-          When a move isn't significant, Chokepoint greys it out and tags it "not significant". The
+          When a move isn't significant, Aftershock greys it out and tags it "not significant". The
           direction may still be interesting, but you shouldn't rely on it. This is why our reports
           often highlight one clear signal in a sea of muted moves rather than pretending every
           reaction is meaningful.
@@ -93,7 +93,7 @@ function MethodologyPage() {
 
       <Section n="04" title="The honesty principle">
         <p>
-          Chokepoint measures the past. It never predicts the future. When we don't have enough
+          Aftershock measures the past. It never predicts the future. When we don't have enough
           data — too few comparable events, too little price history, sources that disagree — we say
           so, in the confidence footer of each report.
         </p>
@@ -104,7 +104,7 @@ function MethodologyPage() {
 
       <Section n="05" title="Lessons from building it">
         <p>
-          Building Chokepoint surfaced three failure modes that were easy to miss on paper:
+          Building Aftershock surfaced three failure modes that were easy to miss on paper:
         </p>
         <ul className="mt-2 list-disc space-y-2 pl-6">
           <li>
