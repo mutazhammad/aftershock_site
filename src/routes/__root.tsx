@@ -77,9 +77,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Chokepoint — Geopolitical market intelligence" },
+      { title: "Aftershock" },
       { name: "description", content: "How geopolitical events have historically moved financial markets. Measured data, not advice." },
-      { property: "og:title", content: "Chokepoint" },
+      { property: "og:title", content: "Aftershock" },
       { property: "og:description", content: "Decision-support intelligence for investors. Measured data, not advice." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
