@@ -64,17 +64,66 @@ export interface EventRecord {
   status: Status;
   recency: Recency;
   summary: string;
+  why_significant?: string;
+  timing_note?: string;
+  date_explanation?: string;
   timeline?: TimelineEntry[];
   timeseries?: TimeSeries;
   reaction: ReactionRow[];
+  volatility?: Volatility;
+  phases?: Phase[];
   lasting_finding: string;
   historical: HistoricalRow[];
   companies_affected: CompanyAffected[];
   companies_named: CompanyNamed[];
   companies_in_news?: CompanyInNews[];
   historical_precedents?: HistoricalPrecedent[];
+  matched_precedents?: string[];
+  precedent_expectation?: PrecedentExpectation;
   confidence: string;
   disclaimer: string;
+}
+
+export interface Volatility {
+  vix?: {
+    before?: number;
+    after?: number;
+    peak?: number;
+    change_pct?: string;
+    plain?: string;
+    spiked?: boolean;
+    tone?: Tone;
+  };
+  sectors?: {
+    sector: string;
+    vol_before?: string;
+    vol_after?: string;
+    ratio?: number;
+    plain?: string;
+    more_volatile?: boolean;
+  }[];
+}
+
+export interface Phase {
+  sector: string;
+  peak_day?: number;
+  peak_pct?: string;
+  reverted_by_day?: number | null;
+}
+
+export interface PrecedentExpectation {
+  based_on: { id: string; name: string; date: string }[];
+  sector_averages: {
+    sector: string;
+    avg_move: string;
+    n_events: number;
+    direction: "gain" | "loss";
+    consistency: string;
+    n_significant: number;
+  }[];
+  avg_vix_change?: string | null;
+  avg_volatility_ratio?: string | number | null;
+  caveat: string;
 }
 
 export interface TimelineEntry {
