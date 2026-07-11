@@ -94,6 +94,7 @@
   --amber: oklch(0.78 0.15 70);                  /* #EF9F27 */
   --teal: oklch(0.65 0.12 170);                  /* #1D9E75 */
   --red: oklch(0.65 0.21 25);                    /* #E24B4A */
+  --blue: oklch(0.68 0.13 235);                  /* #4E9BE6 developing */
 
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -173,6 +174,7 @@
   --color-amber: var(--amber);
   --color-teal: var(--teal);
   --color-red: var(--red);
+  --color-blue: var(--blue);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
 }

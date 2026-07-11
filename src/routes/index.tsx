@@ -41,23 +41,23 @@ function LandingPage() {
             to="/events"
             className="mono inline-flex items-center gap-2 border border-amber bg-amber/10 px-4 py-2.5 text-[12px] uppercase tracking-[0.16em] text-amber transition-colors hover:bg-amber/20"
           >
-            View the events →
+            View The Events →
           </Link>
           <Link
             to="/methodology"
             className="mono inline-flex items-center gap-2 border border-hairline px-4 py-2.5 text-[12px] uppercase tracking-[0.16em] text-text-secondary transition-colors hover:border-amber/40 hover:text-amber"
           >
-            How it works
+            How It Works
           </Link>
         </div>
       </section>
 
       {/* How it works */}
       <section className="mt-10">
-        <SectionHeader n="01" title="How it works" />
+        <SectionHeader n="01" title="How It Works" />
         <ol className="grid gap-3 md:grid-cols-2">
           {[
-            { n: "1", t: "A geopolitical event happens.", d: "News breaks — a chokepoint closes, controls are imposed, hostilities escalate." },
+            { n: "1", t: "A major geopolitical event happens.", d: "News breaks — a chokepoint closes, controls are imposed, hostilities escalate." },
             { n: "2", t: "We measure how each market sector actually moved.", d: "For each sector basket we strip out the overall market's move — isolating the event's effect from noise." },
             { n: "3", t: "We compare it to how similar past events behaved.", d: "Every measured event is checked against historical precedents with a comparable pattern." },
             { n: "4", t: "We show what's statistically reliable — and flag what's just noise.", d: "Moves inside normal weekly swings are greyed out. Only clear signals get the full treatment." },
@@ -75,7 +75,7 @@ function LandingPage() {
 
       {/* What makes it different */}
       <section className="mt-10">
-        <SectionHeader n="02" title="What makes it different" />
+        <SectionHeader n="02" title="What Makes It Different" />
         <div className="border border-hairline bg-panel p-5 md:p-6">
           <p className="max-w-3xl text-[14.5px] leading-relaxed text-text-primary">
             Aftershock only shows what the data actually supports: real measured reactions, not
@@ -89,11 +89,8 @@ function LandingPage() {
         <p className="mono text-[11px] uppercase tracking-[0.16em] text-text-muted">
           Ready to look at real events?
         </p>
-        <Link
-          to="/events"
-          className="mono mt-2 inline-block text-[14px] text-amber hover:underline"
-        >
-          View the events →
+        <Link to="/events" className="mono mt-2 inline-block text-[14px] text-amber hover:underline">
+          View The Events →
         </Link>
       </section>
     </Chrome>
