@@ -37,7 +37,7 @@ export async function fetchFeed(): Promise<FeedItem[]> {
 }
 
 /** Normalize a DB record's `data` jsonb into the shape our components already consume. */
-function normalize(id: string, raw: any): EventRecord {
+export function normalizeRecord(id: string, raw: any): EventRecord {
   const ts = raw.timeseries
     ? {
         days: raw.timeseries.days ?? [],
@@ -71,15 +71,22 @@ function normalize(id: string, raw: any): EventRecord {
     status: raw.status,
     recency: raw.recency,
     summary: raw.summary ?? "",
+    why_significant: raw.why_significant ?? "",
+    timing_note: raw.timing_note ?? "",
+    date_explanation: raw.date_explanation ?? "",
     timeline: raw.timeline ?? [],
     timeseries: ts,
     reaction: raw.reaction ?? [],
+    volatility: raw.volatility ?? undefined,
+    phases: raw.phases ?? [],
     lasting_finding: raw.lasting_finding ?? "",
     historical: raw.historical ?? [],
     companies_affected: raw.companies_affected ?? [],
     companies_named: raw.companies_named ?? [],
     companies_in_news: raw.companies_in_news ?? [],
     historical_precedents: raw.historical_precedents ?? [],
+    matched_precedents: raw.matched_precedents ?? [],
+    precedent_expectation: raw.precedent_expectation ?? undefined,
     confidence: raw.confidence ?? "",
     disclaimer:
       raw.disclaimer ??
@@ -93,5 +100,29 @@ export async function fetchEvent(id: string): Promise<EventRecord | null> {
   if (!res.ok) throw new Error(`Event fetch failed: ${res.status}`);
   const rows = (await res.json()) as { id: string; data: any }[];
   if (!rows.length) return null;
-  return normalize(rows[0].id, rows[0].data ?? {});
+  return normalizeRecord(rows[0].id, rows[0].data ?? {});
+}
+
+/** Fetch a batch of precedent ids. Look in curated_precedents first, then fall back to events. */
+export async function fetchPrecedents(ids: string[]): Promise<EventRecord[]> {
+  if (!ids || ids.length === 0) return [];
+  const idList = ids.map((i) => `"${i}"`).join(",");
+  const curatedUrl = `${SUPABASE_URL}/rest/v1/curated_precedents?select=id,data&id=in.(${idList})`;
+  const curatedRes = await fetch(curatedUrl, { headers: HEADERS });
+  const curated: { id: string; data: any }[] = curatedRes.ok ? await curatedRes.json() : [];
+  const foundIds = new Set(curated.map((r) => r.id));
+  const missing = ids.filter((i) => !foundIds.has(i));
+  let fallback: { id: string; data: any }[] = [];
+  if (missing.length) {
+    const missList = missing.map((i) => `"${i}"`).join(",");
+    const evUrl = `${SUPABASE_URL}/rest/v1/events?select=id,data&id=in.(${missList})`;
+    const evRes = await fetch(evUrl, { headers: HEADERS });
+    fallback = evRes.ok ? await evRes.json() : [];
+  }
+  const all = [...curated, ...fallback];
+  // preserve requested order
+  return ids
+    .map((id) => all.find((r) => r.id === id))
+    .filter((r): r is { id: string; data: any } => !!r)
+    .map((r) => normalizeRecord(r.id, r.data ?? {}));
 }
