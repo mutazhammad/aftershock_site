@@ -39,14 +39,14 @@ function MethodologyPage() {
     <Chrome>
       <div className="border border-hairline bg-panel p-6">
         <div className="mono text-[10.5px] uppercase tracking-[0.18em] text-amber">Methodology</div>
-        <h1 className="mt-2 text-[28px] font-semibold tracking-tight">How Aftershock measures market reactions</h1>
+        <h1 className="mt-2 text-[28px] font-semibold tracking-tight">How Aftershock Measures Market Reactions</h1>
         <p className="mt-3 max-w-3xl text-[14px] leading-relaxed text-text-secondary">
           Aftershock is built around one idea: geopolitical shocks leave a measurable fingerprint on
           markets, and honesty about what we do and don't know is more useful than a confident guess.
         </p>
       </div>
 
-      <Section n="01" title="What is an event study?">
+      <Section n="01" title="What Is An Event Study?">
         <p>
           An event study compares how a group of related stocks moved around a specific date to how
           the overall market moved on the same days. The difference — the sector's move{" "}
@@ -61,7 +61,7 @@ function MethodologyPage() {
         </p>
       </Section>
 
-      <Section n="02" title="Why we anchor to the information date, not the announcement">
+      <Section n="02" title="Why We Anchor To The Information Date, Not The Announcement">
         <p>
           Markets react to information, not to press releases. By the time an announcement is issued
           the price has usually already moved — sometimes days before. If we measured from the
@@ -76,7 +76,7 @@ function MethodologyPage() {
         </p>
       </Section>
 
-      <Section n="03" title="Statistical significance vs. market noise">
+      <Section n="03" title="Statistical Significance vs. Market Noise">
         <p>
           Every sector basket has its own normal weekly swing. A move only counts as{" "}
           <span className="text-text-primary">statistically significant</span> when it sits clearly
@@ -91,7 +91,64 @@ function MethodologyPage() {
         </p>
       </Section>
 
-      <Section n="04" title="The honesty principle">
+      <Section n="04" title="Volatility: A Separate Signal">
+        <p>
+          Direction is only half the story. A sector can end the week roughly flat and still have
+          traded wildly along the way — and a rising VIX tells you the whole market got scared even
+          when the tape looks calm on close. Aftershock reports two volatility signals alongside the
+          directional move:
+        </p>
+        <ul className="mt-2 list-disc space-y-2 pl-6">
+          <li>
+            <span className="text-text-primary">VIX (market-wide fear).</span> The change in the
+            benchmark option-implied volatility index around the event window. A sharp rise means
+            investors were paying up for protection across the whole market.
+          </li>
+          <li>
+            <span className="text-text-primary">Realized sector volatility.</span> The ratio of a
+            sector's actual daily-price swings after the event to its swings before. A ratio well
+            above 1× means the sector's price became noticeably more erratic — even if the
+            direction ended up muted.
+          </li>
+        </ul>
+        <p>
+          Volatility answers a different question than "which way did it move" — and both matter
+          when sizing a decision under uncertainty.
+        </p>
+      </Section>
+
+      <Section n="05" title="The Event Lifecycle: Breaking → Developing → Settled">
+        <p>
+          Every event moves through three states as market data accumulates:
+        </p>
+        <ul className="mt-2 list-disc space-y-2 pl-6">
+          <li>
+            <span className="text-text-primary">Breaking.</span> The event just happened. There is
+            no measurable reaction yet, so we show what similar past events actually did — clearly
+            labelled as history, not a forecast.
+          </li>
+          <li>
+            <span className="text-text-primary">Developing.</span> A partial window of price data
+            exists. Reactions are shown with a "provisional" flag on the significance test.
+          </li>
+          <li>
+            <span className="text-text-primary">Settled.</span> The full 30-day window is complete.
+            The measured event now joins the precedent library and is used to inform the next
+            similar shock.
+          </li>
+        </ul>
+      </Section>
+
+      <Section n="06" title="The Confounding Problem">
+        <p>
+          Multiple things happen every week. When a Fed decision, an earnings surprise and a
+          geopolitical shock all land in the same window, a market move can't cleanly be pinned to
+          one of them. Where relevant, reports flag confounding events so you can weigh the
+          attribution yourself instead of assuming a single cause.
+        </p>
+      </Section>
+
+      <Section n="07" title="The Honesty Principle">
         <p>
           Aftershock measures the past. It never predicts the future. When we don't have enough
           data — too few comparable events, too little price history, sources that disagree — we say
@@ -102,7 +159,7 @@ function MethodologyPage() {
         </p>
       </Section>
 
-      <Section n="05" title="Lessons from building it">
+      <Section n="08" title="Lessons From Building It">
         <p>
           Building Aftershock surfaced three failure modes that were easy to miss on paper:
         </p>
@@ -130,7 +187,7 @@ function MethodologyPage() {
 
       <div className="mt-10 border border-hairline bg-panel p-5">
         <Link to="/events" className="mono text-[12px] uppercase tracking-[0.16em] text-amber hover:underline">
-          View the events →
+          View The Events →
         </Link>
       </div>
     </Chrome>
