@@ -63,55 +63,69 @@
 
 :root {
   --radius: 0.625rem;
-  /* Chokepoint intelligence terminal palette */
-  --background: oklch(0.21 0.005 80);          /* #161512 charcoal */
-  --foreground: oklch(0.93 0.008 80);           /* #ECEAE3 off-white */
-  --card: oklch(0.245 0.006 80);                /* #1F1E18 panel */
-  --card-foreground: oklch(0.93 0.008 80);
-  --popover: oklch(0.245 0.006 80);
-  --popover-foreground: oklch(0.93 0.008 80);
-  --primary: oklch(0.68 0.14 65);               /* #EF9F27 amber accent */
-  --primary-foreground: oklch(0.18 0.005 80);
-  --secondary: oklch(0.28 0.006 80);
-  --secondary-foreground: oklch(0.93 0.008 80);
-  --muted: oklch(0.28 0.006 80);
-  --muted-foreground: oklch(0.66 0.008 80);     /* #9E9B90 secondary grey */
-  --accent: oklch(0.62 0.12 175);               /* teal #1D9E75 */
-  --accent-foreground: oklch(0.98 0.005 80);
-  --destructive: oklch(0.62 0.21 25);           /* red #E24B4A */
-  --destructive-foreground: oklch(0.98 0.005 80);
-  --border: oklch(0.32 0.006 80);               /* #312F28 */
-  --input: oklch(0.32 0.006 80);
-  --ring: oklch(0.68 0.14 65);
+  /* Aftershock intelligence-agency palette (blue-black) */
+  --abyss:     #050A18;
+  --hull:      #0C1628;
+  --steel:     #1B2C47;
+  --signal:    #3FA9F5;
+  --ice:       #8FD3FF;
+  --ember:     #FF6B4A;
+  --verdigris: #2DD4A7;
+  --ash:       #6C7A94;
+  --bone:      #E8EDF5;
+  --alert:     #EF9F27; /* amber, reserved for breaking */
 
-  /* Chokepoint semantic tokens */
-  --canvas: oklch(0.21 0.005 80);
-  --panel: oklch(0.245 0.006 80);
-  --hairline: oklch(0.32 0.006 80);
-  --text-primary: oklch(0.93 0.008 80);
-  --text-secondary: oklch(0.66 0.008 80);
-  --text-muted: oklch(0.51 0.006 80);            /* #6F6C63 */
-  --amber: oklch(0.78 0.15 70);                  /* #EF9F27 */
-  --teal: oklch(0.65 0.12 170);                  /* #1D9E75 */
-  --red: oklch(0.65 0.21 25);                    /* #E24B4A */
-  --blue: oklch(0.68 0.13 235);                  /* #4E9BE6 developing */
+  /* Shadcn semantic tokens */
+  --background: var(--abyss);
+  --foreground: var(--bone);
+  --card: var(--hull);
+  --card-foreground: var(--bone);
+  --popover: var(--hull);
+  --popover-foreground: var(--bone);
+  --primary: var(--signal);
+  --primary-foreground: var(--abyss);
+  --secondary: #14213A;
+  --secondary-foreground: var(--bone);
+  --muted: #14213A;
+  --muted-foreground: var(--ash);
+  --accent: var(--signal);
+  --accent-foreground: var(--abyss);
+  --destructive: var(--ember);
+  --destructive-foreground: var(--bone);
+  --border: var(--steel);
+  --input: var(--steel);
+  --ring: var(--signal);
+
+  /* Aftershock semantic tokens (existing components read these) */
+  --canvas: var(--abyss);
+  --panel: var(--hull);
+  --hairline: var(--steel);
+  --text-primary: var(--bone);
+  --text-secondary: #A9B4C8;
+  --text-muted: var(--ash);
+  /* Retained token names, retuned to new palette */
+  --amber: var(--alert);       /* still amber, for breaking + alerts */
+  --teal: var(--verdigris);    /* gains */
+  --red: var(--ember);         /* losses */
+  --blue: var(--signal);       /* developing / primary accent */
 
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.245 0.006 80);
-  --sidebar-foreground: oklch(0.93 0.008 80);
-  --sidebar-primary: oklch(0.78 0.15 70);
-  --sidebar-primary-foreground: oklch(0.18 0.005 80);
-  --sidebar-accent: oklch(0.28 0.006 80);
-  --sidebar-accent-foreground: oklch(0.93 0.008 80);
-  --sidebar-border: oklch(0.32 0.006 80);
-  --sidebar-ring: oklch(0.68 0.14 65);
+  --sidebar: var(--hull);
+  --sidebar-foreground: var(--bone);
+  --sidebar-primary: var(--signal);
+  --sidebar-primary-foreground: var(--abyss);
+  --sidebar-accent: #14213A;
+  --sidebar-accent-foreground: var(--bone);
+  --sidebar-border: var(--steel);
+  --sidebar-ring: var(--signal);
 
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-display: "Oswald", "Archivo Narrow", "Inter", sans-serif;
 }
 
 .dark {
@@ -160,8 +174,15 @@
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
+    font-variant-numeric: tabular-nums;
   }
-  .mono { font-family: var(--font-mono); }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
 }
 
 @theme inline {
@@ -175,6 +196,105 @@
   --color-teal: var(--teal);
   --color-red: var(--red);
   --color-blue: var(--blue);
+  --color-signal: var(--signal);
+  --color-ice: var(--ice);
+  --color-ember: var(--ember);
+  --color-verdigris: var(--verdigris);
+  --color-ash: var(--ash);
+  --color-bone: var(--bone);
+  --color-abyss: var(--abyss);
+  --color-hull: var(--hull);
+  --color-steel: var(--steel);
+  --color-alert: var(--alert);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+}
+
+/* ============================================================
+   Textures: applied to a fixed overlay so the whole viewport
+   feels like a display being looked into, not a webpage.
+   ============================================================ */
+.texture-grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.texture-scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 61;
+  opacity: 0.55;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(143, 211, 255, 0.03) 0px,
+    rgba(143, 211, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+.texture-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 59;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    rgba(5, 10, 24, 0.45) 95%,
+    rgba(5, 10, 24, 0.75) 100%
+  );
+}
+
+/* Draw a horizontal rule left-to-right on mount */
+@keyframes draw-rule {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+.animate-draw-rule {
+  transform-origin: left center;
+  animation: draw-rule 0.9s cubic-bezier(0.2, 0.6, 0.2, 1) 0.4s both;
+}
+
+/* Slow ambient pulse used on the LIVE dot and event markers */
+@keyframes ambient-pulse {
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.25); }
+}
+.animate-ambient {
+  animation: ambient-pulse 4s ease-in-out infinite;
+}
+
+/* Single ignition pulse for markers as they land */
+@keyframes ignite {
+  0%   { opacity: 0; transform: scale(0.2); }
+  60%  { opacity: 1; transform: scale(1.8); }
+  100% { opacity: 1; transform: scale(1);   }
+}
+.animate-ignite { animation: ignite 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+/* Radar sweep, single revolution */
+@keyframes radar-sweep {
+  from { transform: rotate(-30deg); opacity: 0; }
+  15%  { opacity: 0.9; }
+  to   { transform: rotate(330deg); opacity: 0; }
+}
+.animate-radar { animation: radar-sweep 2.4s cubic-bezier(0.35, 0.1, 0.2, 1) 0.6s both; }
+
+/* Fade + rise reveal */
+@keyframes fade-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.animate-fade-rise { animation: fade-rise 0.7s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-radar, .animate-ambient, .animate-ignite, .animate-draw-rule, .animate-fade-rise {
+    animation: none !important;
+  }
 }
