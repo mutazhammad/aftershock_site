@@ -14,7 +14,7 @@ export function VolatilityBlock({ v }: { v: V }) {
               vix.spiked ? "text-red" : "text-teal"
             }`}
           >
-            {vix.change_pct ?? "—"}
+            {vix.change_pct ?? "-"}
           </div>
           {vix.plain && (
             <p className="mt-1 text-[13px] text-text-primary">{vix.plain}</p>
@@ -22,15 +22,15 @@ export function VolatilityBlock({ v }: { v: V }) {
           <div className="mono mt-3 grid grid-cols-3 gap-2 text-[11px] text-text-secondary">
             <div>
               <div className="text-text-muted uppercase tracking-[0.14em] text-[9.5px]">Before</div>
-              <div className="text-text-primary">{vix.before ?? "—"}</div>
+              <div className="text-text-primary">{vix.before ?? "-"}</div>
             </div>
             <div>
               <div className="text-text-muted uppercase tracking-[0.14em] text-[9.5px]">Peak</div>
-              <div className="text-text-primary">{vix.peak ?? "—"}</div>
+              <div className="text-text-primary">{vix.peak ?? "-"}</div>
             </div>
             <div>
               <div className="text-text-muted uppercase tracking-[0.14em] text-[9.5px]">After</div>
-              <div className="text-text-primary">{vix.after ?? "—"}</div>
+              <div className="text-text-primary">{vix.after ?? "-"}</div>
             </div>
           </div>
         </div>
@@ -59,7 +59,7 @@ export function VolatilityBlock({ v }: { v: V }) {
                     s.more_volatile ? "text-red" : "text-teal"
                   }`}
                 >
-                  {s.plain ?? (typeof s.ratio === "number" ? `${s.ratio.toFixed(2)}×` : "—")}
+                  {s.plain ?? (typeof s.ratio === "number" ? `${s.ratio.toFixed(2)}×` : "-")}
                 </div>
               </li>
             ))}

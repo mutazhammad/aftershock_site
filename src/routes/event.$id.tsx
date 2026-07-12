@@ -26,9 +26,9 @@ export const Route = createFileRoute("/event/$id")({
     const name = loaderData?.record.event.name ?? "Event";
     return {
       meta: [
-        { title: `${name} — Aftershock` },
+        { title: `${name} · Aftershock` },
         { name: "description", content: `Measured market reaction to ${name}.` },
-        { property: "og:title", content: `${name} — Aftershock` },
+        { property: "og:title", content: `${name} · Aftershock` },
         { property: "og:description", content: `Measured market reaction to ${name}.` },
       ],
     };
@@ -173,7 +173,7 @@ function EventReport() {
             <div className="border-t border-hairline p-4">
               <p className="mono text-[11.5px] text-text-secondary">
                 Reported by{" "}
-                <span className="text-text-primary">{e.sources.join(", ")}</span> —{" "}
+                <span className="text-text-primary">{e.sources.join(", ")}</span> ,{" "}
                 <span className={sourcesAgree ? "text-teal" : "text-amber"}>
                   {sourcesAgree ? "Multiple Sources Agree" : "Sources Disagree"}
                 </span>
@@ -219,7 +219,7 @@ function EventReport() {
       {isDeveloping && (
         <section className="mt-8 border-l-2 border-blue bg-blue/10 p-4">
           <div className="mono text-[10px] uppercase tracking-[0.16em] text-blue">
-            Developing — Provisional Numbers
+            Developing, Provisional Numbers
           </div>
           <p className="mt-1 text-[13px] leading-relaxed text-text-primary">
             Partial reaction shown. Significance flags are marked provisional and may change
@@ -359,7 +359,7 @@ function EventReport() {
             <span className="text-text-primary">
               beyond the overall market (S&amp;P 500)
             </span>{" "}
-            — what event studies call the{" "}
+           , what event studies call the{" "}
             <InfoTooltip
               term="cumulative abnormal return"
               definition="The stock or sector's return minus the market's return, added up across the window. It isolates the piece of the move that isn't explained by the broad market."
@@ -435,7 +435,7 @@ function EventReport() {
         <section className="mt-10">
           <SectionTitle n="06" title="Volatility" sub="how erratic prices became" />
           <p className="mb-3 max-w-3xl text-[13px] text-text-secondary">
-            Volatility measures how erratic prices became — a separate signal from the
+            Volatility measures how erratic prices became, a separate signal from the
             direction of the move.
           </p>
           <VolatilityBlock v={e.volatility} />
@@ -471,10 +471,10 @@ function EventReport() {
                   >
                     <td className="px-4 py-2.5 text-text-primary">{ph.sector}</td>
                     <td className="px-4 py-2.5 mono text-text-primary">
-                      {ph.peak_pct ?? "—"}
+                      {ph.peak_pct ?? "-"}
                     </td>
                     <td className="px-4 py-2.5 mono text-text-secondary">
-                      {ph.peak_day != null ? `Day ${ph.peak_day}` : "—"}
+                      {ph.peak_day != null ? `Day ${ph.peak_day}` : "-"}
                     </td>
                     <td className="px-4 py-2.5 mono text-text-secondary">
                       {ph.reverted_by_day != null
@@ -523,7 +523,7 @@ function EventReport() {
                       {h.match ? (
                         <span className="mono text-teal">✓</span>
                       ) : (
-                        <span className="mono text-text-muted">—</span>
+                        <span className="mono text-text-muted">,</span>
                       )}
                     </td>
                   </tr>
@@ -557,7 +557,7 @@ function EventReport() {
             <SectionTitle
               n={isBreaking || !e.companies_affected?.length ? "10" : "10b"}
               title="Companies Mentioned In Reporting"
-              sub="named in coverage — NOT a measured market move"
+              sub="named in coverage, NOT a measured market move"
             />
             <ul className="divide-y divide-hairline border border-hairline">
               {inNews.map((c) => (

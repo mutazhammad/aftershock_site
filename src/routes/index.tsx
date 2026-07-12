@@ -1,108 +1,331 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Chrome } from "@/components/chokepoint/Chrome";
+import { HeroMap } from "@/components/chokepoint/HeroMap";
+import { RecencyBadge, StatusBadge, TypeChip } from "@/components/chokepoint/Badges";
+import {
+  fetchEventLocations,
+  fetchFeed,
+  formatDate,
+  type EventLocation,
+  type FeedItem,
+} from "@/lib/aftershock-api";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Aftershock — Panic is not a strategy" },
+      { title: "Aftershock. Panic Is Not A Strategy." },
       {
         name: "description",
         content:
-          "Aftershock shows how war, sanctions, and blockades have moved markets — measured, not guessed.",
+          "Aftershock tells you which sectors move when a blockade closes, sanctions land, or missiles fly, by how much, and what history says happens next.",
       },
       { property: "og:title", content: "Aftershock" },
       {
         property: "og:description",
-        content: "How geopolitical events move markets — measured, not guessed.",
+        content:
+          "How geopolitical events move markets. Measured, not guessed.",
       },
     ],
   }),
+  loader: async () => {
+    const [feed, locs] = await Promise.all([
+      fetchFeed().catch(() => [] as FeedItem[]),
+      fetchEventLocations().catch(() => [] as EventLocation[]),
+    ]);
+    return { feed, locs };
+  },
   component: LandingPage,
 });
 
 function LandingPage() {
+  const { feed, locs } = Route.useLoaderData() as {
+    feed: FeedItem[];
+    locs: EventLocation[];
+  };
+  const count = feed.length;
+  const proofEvents = feed.slice(0, 3);
+
   return (
-    <Chrome>
-      {/* Hero */}
-      <section className="border border-hairline bg-panel p-8 md:p-12">
-        <div className="mono text-[10.5px] uppercase tracking-[0.18em] text-amber">
-          Geopolitical market intelligence
-        </div>
-        <h1 className="mt-3 text-[36px] md:text-[56px] font-semibold leading-[1.02] tracking-tight">
-          Panic is not a strategy.
-        </h1>
-        <p className="mt-4 max-w-3xl text-[15px] md:text-[17px] leading-relaxed text-text-primary">
-          When war, sanctions, or a blockade rattles the market, Aftershock shows you which
-          sectors win, which lose, and what history says happens next, so your next move is
-          informed instead of reactive.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            to="/events"
-            className="mono inline-flex items-center gap-2 border border-amber bg-amber/10 px-4 py-2.5 text-[12px] uppercase tracking-[0.16em] text-amber transition-colors hover:bg-amber/20"
-          >
-            View The Events →
-          </Link>
-          <Link
-            to="/methodology"
-            className="mono inline-flex items-center gap-2 border border-hairline px-4 py-2.5 text-[12px] uppercase tracking-[0.16em] text-text-secondary transition-colors hover:border-amber/40 hover:text-amber"
-          >
-            How It Works
-          </Link>
-        </div>
-      </section>
+    <div className="relative min-h-screen bg-abyss text-bone">
+      {/* Site textures for this page (Chrome adds them elsewhere; here we
+          render our own frame so the hero can go full-bleed). */}
+      <div className="texture-grain" aria-hidden />
+      <div className="texture-scanlines" aria-hidden />
+      <div className="texture-vignette" aria-hidden />
 
-      {/* How it works */}
-      <section className="mt-10">
-        <SectionHeader n="01" title="How It Works" />
-        <ol className="grid gap-3 md:grid-cols-2">
-          {[
-            { n: "1", t: "A major geopolitical event happens.", d: "News breaks — a chokepoint closes, controls are imposed, hostilities escalate." },
-            { n: "2", t: "We measure how each market sector actually moved.", d: "For each sector basket we strip out the overall market's move — isolating the event's effect from noise." },
-            { n: "3", t: "We compare it to how similar past events behaved.", d: "Every measured event is checked against historical precedents with a comparable pattern." },
-            { n: "4", t: "We show what's statistically reliable — and flag what's just noise.", d: "Moves inside normal weekly swings are greyed out. Only clear signals get the full treatment." },
-          ].map((s) => (
-            <li key={s.n} className="border border-hairline bg-panel p-4">
-              <div className="mono text-[10.5px] uppercase tracking-[0.16em] text-amber">
-                Step {s.n}
-              </div>
-              <div className="mt-1 text-[14.5px] font-semibold text-text-primary">{s.t}</div>
-              <p className="mt-1 text-[13px] leading-relaxed text-text-secondary">{s.d}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
+      {/* Compact top nav overlay */}
+      <TopNav />
 
-      {/* What makes it different */}
-      <section className="mt-10">
-        <SectionHeader n="02" title="What Makes It Different" />
-        <div className="border border-hairline bg-panel p-5 md:p-6">
-          <p className="max-w-3xl text-[14.5px] leading-relaxed text-text-primary">
-            Aftershock only shows what the data actually supports: real measured reactions, not
-            guesses. When an event's market impact is too unclear to call, it tells you that too.
-            <span className="text-text-secondary"> No hype, no false certainty.</span>
+      {/* HERO */}
+      <section className="relative flex min-h-[100vh] items-center justify-center overflow-hidden pt-20">
+        <HeroMap markers={locs} />
+
+        {/* Radial signal glow behind the headline */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse at 50% 45%, rgba(63,169,245,0.22), rgba(63,169,245,0.05) 30%, transparent 60%)",
+          }}
+          aria-hidden
+        />
+
+        <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center px-5 text-center animate-fade-rise">
+          <div className="mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.28em] text-signal">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inset-0 rounded-full bg-signal opacity-70 animate-ambient" />
+              <span className="relative h-2 w-2 rounded-full bg-signal" />
+            </span>
+            {count > 0 ? `${count} Events Tracked · Live` : "Aftershock · Live"}
+          </div>
+
+          <h1
+            className="display mt-6 text-[clamp(3.5rem,11vw,10rem)] leading-[0.88] tracking-[-0.02em] text-bone"
+            style={{ textShadow: "0 0 60px rgba(63,169,245,0.25)" }}
+          >
+            Panic Is Not
+            <br />
+            A Strategy
+          </h1>
+
+          <div className="animate-draw-rule mt-8 h-px w-56 bg-signal/70" />
+
+          <p className="mt-8 max-w-2xl text-[15px] leading-relaxed text-bone/85 md:text-[17px]">
+            A blockade closes. Sanctions land. Missiles fly. Aftershock tells you which
+            sectors move, by how much, and what history says happens next.
           </p>
+
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              to="/events"
+              className="mono inline-flex items-center gap-2 border border-signal bg-signal/15 px-5 py-3 text-[12px] uppercase tracking-[0.2em] text-signal transition-colors hover:bg-signal/25 hover:text-ice"
+              style={{ boxShadow: "0 0 40px rgba(63,169,245,0.15)" }}
+            >
+              View The Events →
+            </Link>
+            <Link
+              to="/methodology"
+              className="mono inline-flex items-center gap-2 border border-steel px-5 py-3 text-[12px] uppercase tracking-[0.2em] text-bone/80 transition-colors hover:border-signal/60 hover:text-ice"
+            >
+              Methodology
+            </Link>
+          </div>
+
+          <div className="mono mt-14 text-[10px] uppercase tracking-[0.28em] text-ash/70">
+            ↓ Scroll
+          </div>
         </div>
       </section>
 
-      <section className="mt-10 border border-hairline bg-panel p-5">
-        <p className="mono text-[11px] uppercase tracking-[0.16em] text-text-muted">
-          Ready to look at real events?
-        </p>
-        <Link to="/events" className="mono mt-2 inline-block text-[14px] text-amber hover:underline">
-          View The Events →
-        </Link>
+      {/* WHAT IT DOES */}
+      <section className="relative z-10 border-t border-steel/60 bg-abyss">
+        <div className="mx-auto max-w-6xl px-5 py-24">
+          <Eyebrow n="01" label="What It Does" />
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <Capability
+              title="Measures The Move"
+              body="When Russia invaded Ukraine, airline stocks fell 14.9 percent beyond the market, a statistically significant move. Aftershock computed that from market data."
+              stat="-14.9%"
+              statTone="loss"
+              statLabel="Airlines vs S&P 500"
+            />
+            <Capability
+              title="Finds The Precedent"
+              body="Every breaking event is matched against historical parallels, measured with the same engine. You see what actually happened last time, in numbers."
+              stat="17+"
+              statTone="signal"
+              statLabel="Measured Precedents"
+            />
+            <Capability
+              title="Separates Signal From Noise"
+              body="Every figure carries a significance test, so you know which moves were real and which were market noise."
+              stat="|t|≥2"
+              statTone="signal"
+              statLabel="Significance Threshold"
+            />
+          </div>
+        </div>
       </section>
-    </Chrome>
-  );
-}
 
-function SectionHeader({ n, title }: { n: string; title: string }) {
-  return (
-    <div className="mb-3 flex items-baseline gap-3 border-b border-hairline pb-2">
-      <span className="mono text-[10px] uppercase tracking-[0.18em] text-text-muted">{n}</span>
-      <h2 className="text-[16px] font-semibold tracking-tight">{title}</h2>
+      {/* SIGNAL CHAIN */}
+      <section className="relative z-10 border-t border-steel/60 bg-hull/40">
+        <div className="mx-auto max-w-6xl px-5 py-24">
+          <Eyebrow n="02" label="The Signal Chain" />
+          <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-4">
+            {[
+              { k: "Event", d: "AI detects it from live news, the moment markets could have known." },
+              { k: "Measure", d: "Market reaction, VIX, realised volatility, all computed from prices." },
+              { k: "Compare", d: "Every breaking event matched to measured historical precedents." },
+              { k: "Verdict", d: "Which sectors moved, by how much, with what statistical confidence." },
+            ].map((s, i) => (
+              <div key={s.k} className="relative border border-steel bg-hull/70 p-5">
+                <div className="mono text-[10px] uppercase tracking-[0.22em] text-signal">
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <div className="display mt-2 text-[22px] text-bone tracking-wide">{s.k}</div>
+                <p className="mt-2 text-[13px] leading-relaxed text-bone/70">{s.d}</p>
+                {i < 3 && (
+                  <div
+                    className="pointer-events-none absolute right-[-8px] top-1/2 hidden h-px w-4 bg-signal/60 md:block"
+                    aria-hidden
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* LIVE PROOF */}
+      {proofEvents.length > 0 && (
+        <section className="relative z-10 border-t border-steel/60 bg-abyss">
+          <div className="mx-auto max-w-6xl px-5 py-24">
+            <div className="flex items-end justify-between gap-4">
+              <Eyebrow n="03" label="Live From The Feed" />
+              <Link
+                to="/events"
+                className="mono text-[11px] uppercase tracking-[0.22em] text-signal hover:text-ice"
+              >
+                All Events →
+              </Link>
+            </div>
+            <ul className="mt-8 grid gap-4 md:grid-cols-3">
+              {proofEvents.map((e) => (
+                <li key={e.id}>
+                  <Link
+                    to="/event/$id"
+                    params={{ id: e.id }}
+                    className="group block h-full border border-steel bg-hull/70 p-5 transition-colors hover:border-signal/60"
+                  >
+                    <div className="flex flex-wrap items-center gap-2">
+                      <TypeChip label={e.type_label} />
+                      <StatusBadge status={e.status} />
+                      <RecencyBadge recency={e.recency} />
+                    </div>
+                    <div className="display mt-4 text-[18px] leading-tight text-bone group-hover:text-ice">
+                      {e.name}
+                    </div>
+                    <div className="mono mt-2 text-[11px] uppercase tracking-[0.18em] text-ash">
+                      {formatDate(e.information_date)}
+                      {e.region ? ` · ${e.region}` : ""}
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      {/* CLOSING CLAIM */}
+      <section className="relative z-10 border-t border-steel/60 bg-hull/40">
+        <div className="mx-auto max-w-4xl px-5 py-24">
+          <div className="border-l-2 border-signal bg-abyss/60 p-8">
+            <div className="mono text-[10.5px] uppercase tracking-[0.24em] text-signal">
+              The Standard
+            </div>
+            <p className="display mt-3 text-[28px] leading-tight text-bone md:text-[36px]">
+              Every Number Here Was Measured, Not Estimated.
+            </p>
+            <p className="mt-6 text-[14.5px] leading-relaxed text-bone/80">
+              Aftershock runs an event-study engine over live market data, computing
+              cumulative abnormal returns, significance tests, and volatility analysis, then
+              matches every breaking event to measured historical precedents. When the
+              market moves, you know how much of it was the event.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                to="/events"
+                className="mono border border-signal bg-signal/15 px-4 py-2.5 text-[11.5px] uppercase tracking-[0.2em] text-signal hover:bg-signal/25 hover:text-ice"
+              >
+                View The Events →
+              </Link>
+              <Link
+                to="/methodology"
+                className="mono border border-steel px-4 py-2.5 text-[11.5px] uppercase tracking-[0.2em] text-bone/80 hover:border-signal/60 hover:text-ice"
+              >
+                Read The Methodology
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer className="relative z-10 border-t border-steel bg-abyss">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-5 py-6 mono text-[11px] text-ash">
+          <span>This tool informs your decision. It does not give investment advice.</span>
+          <span>Built by Mutaz Hammad.</span>
+        </div>
+      </footer>
     </div>
   );
 }
 
+function TopNav() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 40);
+    on();
+    window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, []);
+  return (
+    <header
+      className={`fixed inset-x-0 top-0 z-40 border-b transition-colors ${
+        scrolled ? "border-steel bg-abyss/85 backdrop-blur-md" : "border-transparent bg-transparent"
+      }`}
+    >
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+        <Link to="/" className="flex items-center gap-3">
+          <div className="flex h-7 w-7 items-center justify-center border border-signal/60 text-signal mono text-[11px] font-semibold">
+            AS
+          </div>
+          <div className="display text-[16px] tracking-[0.02em] text-bone">Aftershock</div>
+        </Link>
+        <nav className="mono flex items-center gap-4 text-[11px] uppercase tracking-[0.22em] text-bone/70">
+          <Link to="/events" className="hover:text-ice">Events</Link>
+          <Link to="/methodology" className="hover:text-ice">Methodology</Link>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+function Eyebrow({ n, label }: { n: string; label: string }) {
+  return (
+    <div className="flex items-baseline gap-4 border-b border-steel/60 pb-3">
+      <span className="mono text-[10px] uppercase tracking-[0.28em] text-signal">{n}</span>
+      <h2 className="display text-[22px] tracking-wide text-bone md:text-[26px]">{label}</h2>
+    </div>
+  );
+}
+
+function Capability({
+  title,
+  body,
+  stat,
+  statTone,
+  statLabel,
+}: {
+  title: string;
+  body: string;
+  stat: string;
+  statTone: "loss" | "gain" | "signal";
+  statLabel: string;
+}) {
+  const color =
+    statTone === "loss" ? "text-ember" : statTone === "gain" ? "text-verdigris" : "text-signal";
+  return (
+    <article className="border border-steel bg-hull/70 p-5">
+      <div className="display text-[20px] tracking-wide text-bone">{title}</div>
+      <p className="mt-3 text-[13px] leading-relaxed text-bone/75">{body}</p>
+      <div className="mt-5 border-t border-steel/70 pt-4">
+        <div className={`mono text-[28px] font-semibold leading-none ${color}`}>{stat}</div>
+        <div className="mono mt-1 text-[10px] uppercase tracking-[0.2em] text-ash">
+          {statLabel}
+        </div>
+      </div>
+    </article>
+  );
+}

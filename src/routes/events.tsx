@@ -7,13 +7,13 @@ import { fetchFeed, formatDate, type FeedItem } from "@/lib/aftershock-api";
 export const Route = createFileRoute("/events")({
   head: () => ({
     meta: [
-      { title: "Events — Aftershock" },
+      { title: "Events · Aftershock" },
       {
         name: "description",
         content:
           "Geopolitical events and their measured impact on financial markets. Decision support, not investment advice.",
       },
-      { property: "og:title", content: "Events — Aftershock" },
+      { property: "og:title", content: "Events · Aftershock" },
       {
         property: "og:description",
         content:

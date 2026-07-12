@@ -19,7 +19,7 @@ export interface FeedItem {
   region: string;
 }
 
-/** Format YYYY-MM-DD as "27 Feb 2026" — stable across server/client. */
+/** Format YYYY-MM-DD as "27 Feb 2026", stable across server/client. */
 export function formatDate(iso: string): string {
   if (!iso) return "";
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
@@ -34,6 +34,36 @@ export async function fetchFeed(): Promise<FeedItem[]> {
   const res = await fetch(url, { headers: HEADERS });
   if (!res.ok) throw new Error(`Feed fetch failed: ${res.status}`);
   return (await res.json()) as FeedItem[];
+}
+
+export interface EventLocation {
+  id: string;
+  name: string;
+  recency: "breaking" | "developing" | "settled";
+  coords: [number, number]; // [lng, lat]
+}
+
+/** Lightweight fetch for the hero map: ids, names, recency, and coordinates from data.location.center. */
+export async function fetchEventLocations(): Promise<EventLocation[]> {
+  const url = `${SUPABASE_URL}/rest/v1/events?select=id,name,recency,data&order=information_date.desc&limit=60`;
+  const res = await fetch(url, { headers: HEADERS });
+  if (!res.ok) return [];
+  const rows = (await res.json()) as { id: string; name: string; recency: any; data: any }[];
+  return rows
+    .map((r) => {
+      const c = r.data?.location?.center;
+      if (!Array.isArray(c) || c.length < 2) return null;
+      const lng = Number(c[0]);
+      const lat = Number(c[1]);
+      if (!isFinite(lng) || !isFinite(lat)) return null;
+      return {
+        id: r.id,
+        name: r.name,
+        recency: (r.recency ?? "settled") as EventLocation["recency"],
+        coords: [lng, lat],
+      } as EventLocation;
+    })
+    .filter((x): x is EventLocation => !!x);
 }
 
 /** Normalize a DB record's `data` jsonb into the shape our components already consume. */

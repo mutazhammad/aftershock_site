@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import type { TimeSeries } from "@/lib/chokepoint-types";
 
-const COLORS = ["#EF9F27", "#1D9E75", "#E24B4A", "#9E9B90", "#7EB6FF"];
+const COLORS = ["#3FA9F5", "#2DD4A7", "#FF6B4A", "#8FD3FF", "#EF9F27"];
 
 export function TimeseriesChart({ ts }: { ts: TimeSeries }) {
   const [hidden, setHidden] = useState<Set<string>>(new Set());
@@ -59,39 +59,39 @@ export function TimeseriesChart({ ts }: { ts: TimeSeries }) {
       <div className="h-[300px] w-full">
         <ResponsiveContainer>
           <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 20 }}>
-            <CartesianGrid stroke="#312F28" strokeDasharray="2 4" />
+            <CartesianGrid stroke="#1B2C47" strokeDasharray="2 4" />
             <XAxis
               dataKey="day"
-              stroke="#6F6C63"
-              tick={{ fill: "#9E9B90", fontSize: 10, fontFamily: "JetBrains Mono, monospace" }}
-              label={{ value: "Trading days from event (0 = event day)", position: "insideBottom", offset: -8, fill: "#9E9B90", fontSize: 10 }}
+              stroke="#6C7A94"
+              tick={{ fill: "#A9B4C8", fontSize: 10, fontFamily: "JetBrains Mono, monospace" }}
+              label={{ value: "Trading days from event (0 = event day)", position: "insideBottom", offset: -8, fill: "#A9B4C8", fontSize: 10 }}
             />
             <YAxis
-              stroke="#6F6C63"
-              tick={{ fill: "#9E9B90", fontSize: 10, fontFamily: "JetBrains Mono, monospace" }}
+              stroke="#6C7A94"
+              tick={{ fill: "#A9B4C8", fontSize: 10, fontFamily: "JetBrains Mono, monospace" }}
               tickFormatter={(v) => `${v > 0 ? "+" : ""}${v}%`}
-              label={{ value: "Move beyond the market (%)", angle: -90, position: "insideLeft", fill: "#9E9B90", fontSize: 10, offset: 12 }}
+              label={{ value: "Move beyond the market (%)", angle: -90, position: "insideLeft", fill: "#A9B4C8", fontSize: 10, offset: 12 }}
             />
             <Tooltip
               contentStyle={{
-                background: "#1F1E18",
-                border: "1px solid #312F28",
+                background: "#0C1628",
+                border: "1px solid #1B2C47",
                 fontSize: 11,
                 fontFamily: "JetBrains Mono, monospace",
-                color: "#ECEAE3",
+                color: "#E8EDF5",
               }}
               labelFormatter={(l) => `Day ${l}`}
               formatter={(v: number, name: string) => [`${v > 0 ? "+" : ""}${v}%`, name]}
             />
-            <ReferenceLine y={0} stroke="#6F6C63" strokeWidth={1} />
+            <ReferenceLine y={0} stroke="#6C7A94" strokeWidth={1} />
             {ts.markers.map((m) => (
               <ReferenceLine
                 key={`${m.day}-${m.label}`}
                 x={m.day}
-                stroke="#EF9F27"
+                stroke="#3FA9F5"
                 strokeDasharray="3 3"
-                strokeOpacity={0.6}
-                label={{ value: m.label, fill: "#EF9F27", fontSize: 9, position: "top" }}
+                strokeOpacity={0.7}
+                label={{ value: m.label, fill: "#8FD3FF", fontSize: 9, position: "top" }}
               />
             ))}
             {ts.series.map((s, i) => (

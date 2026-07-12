@@ -40,18 +40,31 @@ export function ReactionBar({ row }: { row: ReactionRow }) {
 
       {/* Bar */}
       <div className="col-span-8 md:col-span-5">
-        <div className="relative h-2.5 w-full bg-panel">
+        <div className="relative h-3 w-full border border-steel/60 bg-abyss">
           {/* center line */}
-          <div className="absolute left-1/2 top-[-3px] h-[14px] w-px bg-hairline" />
+          <div className="absolute left-1/2 top-[-3px] h-[18px] w-px bg-signal/40" />
           {isGain ? (
             <div
               className={`absolute left-1/2 top-0 h-full ${barColor}`}
-              style={{ width: `${widthPct}%` }}
+              style={{
+                width: `${widthPct}%`,
+                background: sig
+                  ? "linear-gradient(to right, #2DD4A7, rgba(45,212,167,0.2))"
+                  : "rgba(108,122,148,0.35)",
+                boxShadow: sig ? "0 0 12px rgba(45,212,167,0.35)" : "none",
+              }}
             />
           ) : (
             <div
               className={`absolute top-0 h-full ${barColor}`}
-              style={{ width: `${widthPct}%`, right: "50%" }}
+              style={{
+                width: `${widthPct}%`,
+                right: "50%",
+                background: sig
+                  ? "linear-gradient(to left, #FF6B4A, rgba(255,107,74,0.2))"
+                  : "rgba(108,122,148,0.35)",
+                boxShadow: sig ? "0 0 12px rgba(255,107,74,0.35)" : "none",
+              }}
             />
           )}
         </div>
