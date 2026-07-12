@@ -4,13 +4,13 @@ import { Chrome } from "@/components/chokepoint/Chrome";
 export const Route = createFileRoute("/methodology")({
   head: () => ({
     meta: [
-      { title: "Methodology — Aftershock" },
+      { title: "Methodology · Aftershock" },
       {
         name: "description",
         content:
           "How Aftershock measures market reactions to geopolitical events using event studies, information-date anchoring, and significance filtering.",
       },
-      { property: "og:title", content: "Methodology — Aftershock" },
+      { property: "og:title", content: "Methodology · Aftershock" },
       {
         property: "og:description",
         content: "Event studies, information-date anchoring, significance filtering, and honesty principles.",
@@ -49,8 +49,8 @@ function MethodologyPage() {
       <Section n="01" title="What Is An Event Study?">
         <p>
           An event study compares how a group of related stocks moved around a specific date to how
-          the overall market moved on the same days. The difference — the sector's move{" "}
-          <span className="text-text-primary">beyond</span> the market — is what we call the
+          the overall market moved on the same days. The difference, the sector's move{" "}
+          <span className="text-text-primary">beyond</span> the market, is what we call the
           abnormal return. Adding those abnormal returns across a short window gives the{" "}
           <span className="text-text-primary">cumulative abnormal return (CAR)</span>: the piece of
           the sector's move that isn't explained by the broad market.
@@ -64,15 +64,15 @@ function MethodologyPage() {
       <Section n="02" title="Why We Anchor To The Information Date, Not The Announcement">
         <p>
           Markets react to information, not to press releases. By the time an announcement is issued
-          the price has usually already moved — sometimes days before. If we measured from the
+          the price has usually already moved, sometimes days before. If we measured from the
           announcement date we would systematically understate the reaction.
         </p>
         <p>
           Example: for the <span className="text-text-primary">Strait of Hormuz closure</span>, the
           formal announcement was on 4 March 2026. But vessel-tracking anomalies were public on 26
           February and wire reports of restrictions circulated on 28 February. Oil, tanker and
-          airline stocks had already repriced by 1 March. Anchoring measurement to 28 February — the
-          information date — recovers the full reaction; anchoring to 4 March would miss most of it.
+          airline stocks had already repriced by 1 March. Anchoring measurement to 28 February, the
+          information date, recovers the full reaction; anchoring to 4 March would miss most of it.
         </p>
       </Section>
 
@@ -80,7 +80,7 @@ function MethodologyPage() {
         <p>
           Every sector basket has its own normal weekly swing. A move only counts as{" "}
           <span className="text-text-primary">statistically significant</span> when it sits clearly
-          outside that basket's usual range — big enough that we can't reasonably explain it as
+          outside that basket's usual range, big enough that we can't reasonably explain it as
           ordinary week-to-week variation.
         </p>
         <p>
@@ -94,7 +94,7 @@ function MethodologyPage() {
       <Section n="04" title="Volatility: A Separate Signal">
         <p>
           Direction is only half the story. A sector can end the week roughly flat and still have
-          traded wildly along the way — and a rising VIX tells you the whole market got scared even
+          traded wildly along the way, and a rising VIX tells you the whole market got scared even
           when the tape looks calm on close. Aftershock reports two volatility signals alongside the
           directional move:
         </p>
@@ -107,12 +107,12 @@ function MethodologyPage() {
           <li>
             <span className="text-text-primary">Realized sector volatility.</span> The ratio of a
             sector's actual daily-price swings after the event to its swings before. A ratio well
-            above 1× means the sector's price became noticeably more erratic — even if the
+            above 1× means the sector's price became noticeably more erratic, even if the
             direction ended up muted.
           </li>
         </ul>
         <p>
-          Volatility answers a different question than "which way did it move" — and both matter
+          Volatility answers a different question than "which way did it move", and both matter
           when sizing a decision under uncertainty.
         </p>
       </Section>
@@ -124,7 +124,7 @@ function MethodologyPage() {
         <ul className="mt-2 list-disc space-y-2 pl-6">
           <li>
             <span className="text-text-primary">Breaking.</span> The event just happened. There is
-            no measurable reaction yet, so we show what similar past events actually did — clearly
+            no measurable reaction yet, so we show what similar past events actually did, clearly
             labelled as history, not a forecast.
           </li>
           <li>
@@ -151,7 +151,7 @@ function MethodologyPage() {
       <Section n="07" title="The Honesty Principle">
         <p>
           Aftershock measures the past. It never predicts the future. When we don't have enough
-          data — too few comparable events, too little price history, sources that disagree — we say
+          data, too few comparable events, too little price history, sources that disagree, we say
           so, in the confidence footer of each report.
         </p>
         <p>
@@ -179,7 +179,7 @@ function MethodologyPage() {
           <li>
             <span className="text-text-primary">Matching the basket to the event.</span> A generic
             "energy" basket misses the point of a shipping-route disruption. Every event type is
-            paired with baskets whose exposures actually correspond to the shock — tanker operators
+            paired with baskets whose exposures actually correspond to the shock, tanker operators
             for chokepoints, foundry-exposed semis for export controls, and so on.
           </li>
         </ul>

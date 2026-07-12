@@ -19,7 +19,7 @@ export interface FeedItem {
   region: string;
 }
 
-/** Format YYYY-MM-DD as "27 Feb 2026" — stable across server/client. */
+/** Format YYYY-MM-DD as "27 Feb 2026", stable across server/client. */
 export function formatDate(iso: string): string {
   if (!iso) return "";
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
