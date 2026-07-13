@@ -429,6 +429,8 @@ function EventReport() {
             n="03"
             title="What Similar Events Have Done"
             sub="history, not a forecast"
+            href="/methodology"
+            hash="precedents"
           />
 
           {pe.based_on && pe.based_on.length > 0 && (
@@ -448,6 +450,30 @@ function EventReport() {
                 ))}
               </ul>
             </div>
+          )}
+
+          {pe.sector_averages && pe.sector_averages.length > 0 && (
+            <>
+              <div className="mb-4 border border-hairline bg-panel p-4">
+                <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
+                  Sector Averages · Diverging From Zero
+                </div>
+                <PrecedentDivergingBars pe={pe} />
+              </div>
+
+              {pe.per_precedent && pe.per_precedent.length > 0 && (
+                <div className="mb-4 border border-hairline bg-panel p-4">
+                  <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
+                    Spread Across Precedents · Every Dot Is One Event
+                  </div>
+                  <PrecedentDotPlot pe={pe} />
+                </div>
+              )}
+
+              <p className="mb-4 max-w-3xl text-[13px] leading-relaxed text-text-secondary">
+                {precedentSpreadProse(pe)}
+              </p>
+            </>
           )}
 
           {pe.sector_averages && pe.sector_averages.length > 0 && (
@@ -501,6 +527,23 @@ function EventReport() {
 
           {(pe.avg_vix_change || pe.avg_volatility_ratio) && (
             <div className="mt-4 grid gap-3 md:grid-cols-2">
+              <div className="border border-hairline bg-panel p-4">
+                <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
+                  VIX Response · Individual Precedents
+                </div>
+                <PrecedentVixStrip pe={pe} />
+              </div>
+              <div className="border border-hairline bg-panel p-4">
+                <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
+                  Volatility Ratios · By Sector
+                </div>
+                <PrecedentVolatilityLollipop pe={pe} />
+              </div>
+            </div>
+          )}
+
+          {(pe.avg_vix_change || pe.avg_volatility_ratio) && (
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
               {pe.avg_vix_change && (
                 <div className="border border-hairline bg-panel p-4">
                   <div className="mono text-[10px] uppercase tracking-[0.16em] text-text-muted">
@@ -538,6 +581,24 @@ function EventReport() {
           )}
         </section>
       )}
+
+      {e.important_notes &&
+        (e.important_notes.overall_applicability ||
+          (e.important_notes.notes && e.important_notes.notes.length > 0)) && (
+          <section className="mt-10">
+            <SectionTitle
+              n="03b"
+              title="Important Notes"
+              sub="context that shapes how to read the numbers"
+            />
+            <ImportantNotesBlock
+              notes={e.important_notes}
+              precedentNames={
+                new Map(precedents.map((p) => [p.id, p.event.name || p.id]))
+              }
+            />
+          </section>
+        )}
 
       <section className="mt-10">
         <SectionTitle n="04" title="How To Read This" />
