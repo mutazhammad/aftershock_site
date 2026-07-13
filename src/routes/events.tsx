@@ -1,8 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Chrome } from "@/components/chokepoint/Chrome";
-import { RecencyBadge, StatusBadge, TypeChip } from "@/components/chokepoint/Badges";
-import { fetchFeed, formatDate, type FeedItem } from "@/lib/aftershock-api";
+import { FeedRow } from "@/components/chokepoint/FeedRow";
+import { fetchFeed, type FeedItem } from "@/lib/aftershock-api";
 
 export const Route = createFileRoute("/events")({
   head: () => ({
@@ -11,22 +11,28 @@ export const Route = createFileRoute("/events")({
       {
         name: "description",
         content:
-          "Geopolitical events and their measured impact on financial markets. Decision support, not investment advice.",
+          "Live watch list of geopolitical events and their measured market reactions.",
       },
       { property: "og:title", content: "Events · Aftershock" },
       {
         property: "og:description",
         content:
-          "Geopolitical events and their measured impact on financial markets.",
+          "Live watch list of geopolitical events and their measured market reactions.",
       },
     ],
   }),
   loader: () => fetchFeed(),
-  errorComponent: ({ error }) => (
+  errorComponent: ({ error, reset }) => (
     <Chrome>
       <div className="border border-hairline bg-panel p-6">
         <h1 className="text-lg font-semibold">Couldn't Load Events</h1>
         <p className="mono mt-2 text-[12px] text-text-muted">{error.message}</p>
+        <button
+          onClick={() => reset()}
+          className="mono mt-4 border border-hairline px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] text-text-secondary hover:border-signal/40 hover:text-signal"
+        >
+          Try Again
+        </button>
       </div>
     </Chrome>
   ),
@@ -40,9 +46,9 @@ export const Route = createFileRoute("/events")({
   component: FeedPage,
 });
 
-type Period = "all" | "this_week" | "last_week" | "last_30";
+type Period = "all" | "this_week" | "last_week" | "last_30" | "range";
 
-const PERIODS: { id: Period; label: string }[] = [
+const PERIODS: { id: Exclude<Period, "range">; label: string }[] = [
   { id: "all", label: "All Time" },
   { id: "this_week", label: "This Week" },
   { id: "last_week", label: "Last Week" },
@@ -50,11 +56,10 @@ const PERIODS: { id: Period; label: string }[] = [
 ];
 
 function startOfWeek(d: Date): Date {
-  const day = d.getDay(); // 0=Sun
-  const diff = (day + 6) % 7; // Monday start
   const r = new Date(d);
+  const dow = (r.getDay() + 6) % 7;
   r.setHours(0, 0, 0, 0);
-  r.setDate(r.getDate() - diff);
+  r.setDate(r.getDate() - dow);
   return r;
 }
 
@@ -64,10 +69,7 @@ function inPeriod(iso: string, p: Period, from: string, to: string): boolean {
   if (isNaN(d.getTime())) return false;
   const now = new Date();
   if (p === "all" && !from && !to) return true;
-  if (p === "this_week") {
-    const s = startOfWeek(now);
-    return d >= s;
-  }
+  if (p === "this_week") return d >= startOfWeek(now);
   if (p === "last_week") {
     const s = startOfWeek(now);
     const prev = new Date(s);
@@ -92,201 +94,158 @@ function inPeriod(iso: string, p: Period, from: string, to: string): boolean {
 
 function FeedPage() {
   const initial = Route.useLoaderData() as FeedItem[];
-  const [items, setItems] = useState<FeedItem[]>(initial);
-  const [loading, setLoading] = useState(false);
-  const [flash, setFlash] = useState(false);
-  const [updatedAt, setUpdatedAt] = useState<string>("");
   const [q, setQ] = useState("");
   const [period, setPeriod] = useState<Period>("all");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [timeOpen, setTimeOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setUpdatedAt(
-      new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    );
-  }, []);
-
-  useEffect(() => {
-    if (!flash) return;
-    const t = setTimeout(() => setFlash(false), 1400);
-    return () => clearTimeout(t);
-  }, [flash]);
-
-  const handleRefresh = async () => {
-    if (loading) return;
-    setLoading(true);
-    try {
-      const fresh = await fetchFeed();
-      setItems(fresh);
-      setUpdatedAt(
-        new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      );
-      setFlash(true);
-    } finally {
-      setLoading(false);
-    }
-  };
+    if (!timeOpen) return;
+    const onDoc = (ev: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(ev.target as Node)) {
+        setTimeOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [timeOpen]);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    return items.filter((e) => {
+    return initial.filter((e) => {
       if (
         needle &&
         !e.name.toLowerCase().includes(needle) &&
         !(e.type_label ?? "").toLowerCase().includes(needle)
-      ) {
+      )
         return false;
-      }
       if (!inPeriod(e.information_date, period, from, to)) return false;
       return true;
     });
-  }, [items, q, period, from, to]);
+  }, [initial, q, period, from, to]);
 
-  const clearFilters = () => {
+  const activeLabel =
+    period === "range"
+      ? `${from || "…"} → ${to || "…"}`
+      : PERIODS.find((p) => p.id === period)?.label ?? "All Time";
+
+  const clear = () => {
     setQ("");
     setPeriod("all");
     setFrom("");
     setTo("");
   };
-
   const hasFilters = q || period !== "all" || from || to;
 
   return (
     <Chrome>
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-[22px] font-semibold tracking-tight">Event Feed</h1>
-          <p className="mono mt-1 text-[11px] uppercase tracking-[0.16em] text-text-muted">
-            Showing {filtered.length} of {items.length} events · newest first
-            {updatedAt ? ` · updated ${updatedAt}` : ""}
-          </p>
+      <div className="mb-6">
+        <div className="mono text-[10.5px] uppercase tracking-[0.22em] text-signal">
+          Watch List
         </div>
-        <div className="flex items-center gap-2">
-          {flash && (
-            <span className="mono border border-teal/40 bg-teal/10 px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-teal">
-              ✓ Updated
-            </span>
-          )}
-          <button
-            onClick={handleRefresh}
-            disabled={loading}
-            className="mono inline-flex items-center gap-2 border border-hairline bg-panel px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] text-text-secondary transition-colors hover:border-amber/40 hover:text-amber disabled:opacity-60"
-          >
-            <span className={loading ? "inline-block animate-spin" : ""} aria-hidden>
-              ↻
-            </span>
-            {loading ? "Refreshing…" : "Refresh"}
-          </button>
-        </div>
+        <h1 className="display mt-1 text-[28px] tracking-tight text-bone">
+          Geopolitical Events, Measured
+        </h1>
       </div>
 
-      {/* Controls */}
-      <div className="mb-4 space-y-3 border border-hairline bg-panel p-3">
-        <div className="flex flex-wrap items-center gap-2">
+      {/* Command bar */}
+      <div className="mb-4 border border-steel bg-hull/60 p-3 mono">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-signal text-[13px]">&gt;</span>
           <input
             type="search"
             value={q}
-            onChange={(ev) => setQ(ev.target.value)}
-            placeholder="Search by name or type…"
-            className="mono min-w-0 flex-1 border border-hairline bg-canvas px-3 py-2 text-[12px] text-text-primary placeholder:text-text-muted focus:border-amber/50 focus:outline-none"
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="search events"
+            className="min-w-0 flex-1 bg-transparent text-[13px] text-bone placeholder:text-ash focus:outline-none"
           />
-          {PERIODS.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => {
-                setPeriod(p.id);
-                setFrom("");
-                setTo("");
-              }}
-              className={`mono border px-2.5 py-1.5 text-[10.5px] uppercase tracking-[0.14em] transition-colors ${
-                period === p.id && !from && !to
-                  ? "border-amber text-amber bg-amber/10"
-                  : "border-hairline text-text-secondary hover:border-amber/40 hover:text-amber"
-              }`}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-        <div className="flex flex-wrap items-center gap-2 text-[11px]">
-          <label className="mono text-[10px] uppercase tracking-[0.14em] text-text-muted">
-            Range
-          </label>
-          <input
-            type="date"
-            value={from}
-            onChange={(ev) => {
-              setFrom(ev.target.value);
-              setPeriod("all");
-            }}
-            className="mono border border-hairline bg-canvas px-2 py-1 text-[11px] text-text-primary focus:border-amber/50 focus:outline-none"
-          />
-          <span className="text-text-muted">→</span>
-          <input
-            type="date"
-            value={to}
-            onChange={(ev) => {
-              setTo(ev.target.value);
-              setPeriod("all");
-            }}
-            className="mono border border-hairline bg-canvas px-2 py-1 text-[11px] text-text-primary focus:border-amber/50 focus:outline-none"
-          />
-          {hasFilters && (
+          <div ref={menuRef} className="relative">
             <button
               type="button"
-              onClick={clearFilters}
-              className="mono ml-auto border border-hairline px-2 py-1 text-[10.5px] uppercase tracking-[0.14em] text-text-muted hover:border-amber/40 hover:text-amber"
+              onClick={() => setTimeOpen((o) => !o)}
+              className="border border-steel px-3 py-1.5 text-[10.5px] uppercase tracking-[0.16em] text-text-secondary hover:border-signal/60 hover:text-ice"
             >
-              Clear Filters
+              {activeLabel} ▾
             </button>
-          )}
+            {timeOpen && (
+              <div className="absolute right-0 top-full z-20 mt-1 w-72 border border-steel bg-hull p-2 shadow-2xl">
+                {PERIODS.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => {
+                      setPeriod(p.id);
+                      setFrom("");
+                      setTo("");
+                      setTimeOpen(false);
+                    }}
+                    className={`block w-full px-2 py-1.5 text-left text-[11px] uppercase tracking-[0.14em] transition-colors ${
+                      period === p.id
+                        ? "text-signal bg-signal/10"
+                        : "text-text-secondary hover:text-ice hover:bg-steel/40"
+                    }`}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+                <div className="mt-2 border-t border-steel pt-2">
+                  <div className="mb-1 text-[9.5px] uppercase tracking-[0.14em] text-text-muted">
+                    Date Range
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="date"
+                      value={from}
+                      onChange={(e) => {
+                        setFrom(e.target.value);
+                        setPeriod("range");
+                      }}
+                      className="w-full border border-steel bg-abyss px-1.5 py-1 text-[11px] text-bone focus:border-signal/60 focus:outline-none"
+                    />
+                    <span className="text-ash">→</span>
+                    <input
+                      type="date"
+                      value={to}
+                      onChange={(e) => {
+                        setTo(e.target.value);
+                        setPeriod("range");
+                      }}
+                      className="w-full border border-steel bg-abyss px-1.5 py-1 text-[11px] text-bone focus:border-signal/60 focus:outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <span className="text-[10.5px] uppercase tracking-[0.18em] text-signal">
+            Showing {filtered.length} of {initial.length} Events
+          </span>
         </div>
       </div>
 
       {filtered.length === 0 ? (
-        <div className="border border-dashed border-hairline bg-panel p-8 text-center">
-          <p className="mono text-[11px] uppercase tracking-[0.14em] text-text-muted">
-            No events match these filters.
+        <div className="border border-dashed border-steel bg-hull/40 p-8 mono">
+          <p className="text-[13px] text-text-primary">
+            No events match {q ? `"${q}"` : "these filters"}
+            {period !== "all" && period !== "range"
+              ? ` in ${activeLabel.toLowerCase()}`
+              : ""}
+            .
           </p>
           {hasFilters && (
             <button
-              type="button"
-              onClick={clearFilters}
-              className="mono mt-3 border border-hairline px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] text-amber hover:border-amber/40"
+              onClick={clear}
+              className="mt-3 text-[12px] text-signal underline decoration-signal/50 underline-offset-2 hover:text-ice"
             >
-              Clear Filters
+              &gt; clear filters
             </button>
           )}
         </div>
       ) : (
-        <ul className="space-y-3">
-          {filtered.map((e) => (
-            <li key={e.id}>
-              <Link
-                to="/event/$id"
-                params={{ id: e.id }}
-                className="group block border border-hairline bg-panel p-4 transition-colors hover:border-amber/40"
-              >
-                <div className="flex flex-wrap items-center gap-2">
-                  <TypeChip label={e.type_label} />
-                  <StatusBadge status={e.status} />
-                  <RecencyBadge recency={e.recency} />
-                  {e.region && (
-                    <span className="mono text-[10.5px] uppercase tracking-[0.14em] text-text-muted">
-                      · {e.region}
-                    </span>
-                  )}
-                </div>
-                <h2 className="mt-2 text-[16px] font-semibold tracking-tight text-text-primary group-hover:text-amber">
-                  {e.name}
-                </h2>
-                <div className="mono mt-1 text-[11px] text-text-muted">
-                  {formatDate(e.information_date)}
-                </div>
-              </Link>
-            </li>
+        <ul className="border-t border-steel">
+          {filtered.map((e, i) => (
+            <FeedRow key={e.id} item={e} index={i} />
           ))}
         </ul>
       )}

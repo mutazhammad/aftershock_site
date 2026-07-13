@@ -9,8 +9,16 @@ import { MatchedPrecedents } from "@/components/chokepoint/MatchedPrecedents";
 import { VolatilityBlock } from "@/components/chokepoint/Volatility";
 import { MapBackgroundGeo } from "@/components/chokepoint/MapBackgroundGeo";
 import { InfoTooltip } from "@/components/chokepoint/InfoTooltip";
+import {
+  PrecedentDivergingBars,
+  PrecedentDotPlot,
+  PrecedentVixStrip,
+  PrecedentVolatilityLollipop,
+} from "@/components/chokepoint/PrecedentCharts";
+import { CompaniesInvolvedBlock } from "@/components/chokepoint/CompaniesInvolved";
+import { ImportantNotesBlock } from "@/components/chokepoint/ImportantNotes";
 import { fetchEvent, fetchPrecedents } from "@/lib/aftershock-api";
-import type { EventRecord } from "@/lib/chokepoint-types";
+import type { EventRecord, ReactionRow } from "@/lib/chokepoint-types";
 
 export const Route = createFileRoute("/event/$id")({
   loader: async ({
@@ -61,23 +69,177 @@ export const Route = createFileRoute("/event/$id")({
   component: EventReport,
 });
 
-function SectionTitle({ n, title, sub }: { n: string; title: string; sub?: string }) {
+function parsePctNum(v: any): number {
+  if (typeof v === "number") return v;
+  if (typeof v === "string") {
+    const n = parseFloat(v.replace("%", "").replace("+", ""));
+    return isNaN(n) ? 0 : n;
+  }
+  return 0;
+}
+
+function isSig(r: ReactionRow): boolean {
+  return typeof r.t_stat === "number" ? Math.abs(r.t_stat) >= 2 : !!r.significant;
+}
+
+function reactionProse(reaction: ReactionRow[], typeLabel?: string): string {
+  if (!reaction?.length) return "";
+  const sorted = [...reaction].sort(
+    (a, b) => Math.abs(parsePctNum(b.pct)) - Math.abs(parsePctNum(a.pct)),
+  );
+  const sig = sorted.filter(isSig);
+  const top = sorted[0];
+  const parts: string[] = [];
+  if (top) {
+    parts.push(
+      `${top.sector} moved most at ${top.pct} against the market${
+        typeLabel ? `, the direction you would expect from a ${typeLabel.replace(/[_-]+/g, " ")}` : ""
+      }.`,
+    );
+  }
+  if (sig.length === 0) {
+    parts.push(
+      "None of the moves cleared the significance threshold. Read the direction as flavour, not signal.",
+    );
+  } else if (sig.length === reaction.length) {
+    parts.push(
+      `Every sector cleared significance, an unusually broad reaction. When everything moves together the shock is systemic, not sector-specific.`,
+    );
+  } else {
+    parts.push(
+      `${sig.length} of ${reaction.length} sectors cleared the significance threshold: ${sig
+        .slice(0, 3)
+        .map((r) => r.sector)
+        .join(", ")}. The rest sit inside their normal weekly range and should not be over-read.`,
+    );
+  }
+  return parts.join(" ");
+}
+
+function vixProse(v: NonNullable<EventRecord["volatility"]>["vix"]): string {
+  if (!v) return "";
+  const chg = parsePctNum(v.change_pct);
+  if (!chg && !v.plain) return "";
+  const dir = chg > 0 ? "rose" : "fell";
+  const magnitude = Math.abs(chg);
+  let intensity: string;
+  if (magnitude >= 30) intensity = "a genuine fear spike";
+  else if (magnitude >= 15) intensity = "a meaningful pickup in fear";
+  else if (magnitude >= 5) intensity = "a mild move";
+  else intensity = "essentially flat";
+  return `The VIX ${dir} ${magnitude.toFixed(1)} percent across the window, ${intensity}. Read this as the market's demand for protection, not the direction of any single sector.`;
+}
+
+function volSectorsProse(
+  sectors: NonNullable<NonNullable<EventRecord["volatility"]>["sectors"]>,
+): string {
+  if (!sectors?.length) return "";
+  const scored = sectors.map((s) => ({ ...s, r: typeof s.ratio === "number" ? s.ratio : 1 }));
+  const worst = [...scored].sort((a, b) => b.r - a.r)[0];
+  const moreCount = scored.filter((s) => s.r > 1.15).length;
+  return `A ratio above 1.00 means the sector's daily-price swings widened after the event. ${worst.sector} became the most erratic at ${
+    worst.ratio ? worst.ratio.toFixed(2) : "-"
+  }×, and ${moreCount} of ${scored.length} sectors traded meaningfully wider than they did before. Volatility is a separate signal from direction: a sector can end flat and still have traded wildly along the way.`;
+}
+
+function phasesProse(phases: NonNullable<EventRecord["phases"]>): string {
+  if (!phases?.length) return "";
+  const withPeak = phases.filter((p) => p.peak_day != null);
+  if (!withPeak.length) return "";
+  const days = withPeak.map((p) => p.peak_day as number);
+  const avgPeak = Math.round(days.reduce((a, b) => a + b, 0) / days.length);
+  const reverted = phases.filter((p) => p.reverted_by_day != null).length;
+  const stuck = phases.length - reverted;
+  return `The reaction peaked around day ${avgPeak} on average. ${
+    reverted > 0
+      ? `${reverted} of ${phases.length} sectors reverted inside the window`
+      : "No sectors reverted inside the measurement window"
+  }${stuck > 0 ? `, ${stuck} were still elevated at the close` : ""}. A reaction that reverts is a shock priced in; one that stays is a re-rating.`;
+}
+
+function precedentSpreadProse(pe: NonNullable<EventRecord["precedent_expectation"]>): string {
+  const rows = pe.sector_averages ?? [];
+  if (!rows.length) return "";
+  const wide = rows.filter(
+    (r) =>
+      typeof r.spread === "number" ? r.spread > Math.abs(parsePctNum(r.avg_move)) : false,
+  );
+  const consistent = rows.filter((r) => (r.n_significant ?? 0) > 0);
+  return `The spread across precedents matters as much as the mean. ${
+    consistent.length
+  } of ${rows.length} sectors showed a consistent pattern across the historical set. ${
+    wide.length > 0
+      ? "Where the range is wider than the average, the past reaction was scattered and any single-number expectation is misleading."
+      : "Where the range is tight, the historical pattern was consistent and the average is a reasonable anchor."
+  }`;
+}
+
+function SectionTitle({
+  n,
+  title,
+  sub,
+  href,
+  hash,
+}: {
+  n: string;
+  title: string;
+  sub?: string;
+  href?: string;
+  hash?: string;
+}) {
   return (
     <div className="mb-3 flex items-baseline gap-3 border-b border-hairline pb-2">
       <span className="mono text-[10px] uppercase tracking-[0.18em] text-text-muted">{n}</span>
-      <h2 className="text-[15px] font-semibold tracking-tight text-text-primary">{title}</h2>
+      <h2 className="text-[15px] font-semibold tracking-tight text-text-primary">
+        {href ? (
+          <Link
+            to={href as any}
+            hash={hash}
+            className="underline decoration-signal/40 decoration-dotted underline-offset-4 hover:decoration-signal hover:text-signal"
+          >
+            {title}
+          </Link>
+        ) : (
+          title
+        )}
+      </h2>
       {sub && <span className="mono text-[10.5px] text-text-muted">{sub}</span>}
     </div>
   );
 }
 
-function TransparencyCard({ label, text }: { label: string; text: string }) {
-  return (
+function TransparencyCard({
+  label,
+  text,
+  linkHash,
+}: {
+  label: string;
+  text: string;
+  linkHash?: string;
+}) {
+  const inner = (
     <div className="border border-hairline bg-panel p-4">
       <div className="mono text-[10px] uppercase tracking-[0.16em] text-amber">{label}</div>
       <p className="mt-1 text-[13px] leading-relaxed text-text-primary">{text}</p>
+      {linkHash && (
+        <span className="mono mt-2 block text-[10px] uppercase tracking-[0.14em] text-signal underline decoration-dotted underline-offset-2">
+          Read how dates work →
+        </span>
+      )}
     </div>
   );
+  if (linkHash) {
+    return (
+      <Link
+        to="/methodology"
+        hash={linkHash}
+        className="block transition-colors hover:[&_p]:text-ice"
+      >
+        {inner}
+      </Link>
+    );
+  }
+  return inner;
 }
 
 function EventReport() {
@@ -120,7 +282,14 @@ function EventReport() {
             <div className="flex flex-wrap items-center gap-2">
               {e.event.type_label && <TypeChip label={e.event.type_label} />}
               <StatusBadge status={e.status} />
-              <RecencyBadge recency={e.recency} />
+              <Link
+                to="/methodology"
+                hash="lifecycle"
+                title="How the event lifecycle works"
+                className="inline-flex"
+              >
+                <RecencyBadge recency={e.recency} />
+              </Link>
               {e.location?.name && (
                 <span className="mono text-[10.5px] uppercase tracking-[0.14em] text-text-muted">
                   · {e.location.name}
@@ -186,9 +355,24 @@ function EventReport() {
       {e.summary && (
         <section className="mt-10">
           <SectionTitle n="01" title="What Happened" />
-          <p className="max-w-3xl text-[14.5px] leading-relaxed text-text-primary">
+          <p className="max-w-3xl text-[14.5px] leading-[1.75] text-text-primary whitespace-pre-line">
             {e.summary}
           </p>
+        </section>
+      )}
+
+      {e.transmission_mechanism && (
+        <section className="mt-10">
+          <SectionTitle
+            n="01b"
+            title="How This Reaches Markets"
+            sub="the causal chain"
+          />
+          <div className="max-w-3xl border-l-2 border-signal bg-signal/5 p-5">
+            <p className="text-[14.5px] leading-[1.75] text-text-primary whitespace-pre-line">
+              {e.transmission_mechanism}
+            </p>
+          </div>
         </section>
       )}
 
@@ -199,7 +383,11 @@ function EventReport() {
           )}
           {e.timing_note && <TransparencyCard label="Timing" text={e.timing_note} />}
           {e.date_explanation && (
-            <TransparencyCard label="About This Date" text={e.date_explanation} />
+            <TransparencyCard
+              label="About This Date"
+              text={e.date_explanation}
+              linkHash="information-date"
+            />
           )}
         </section>
       )}
@@ -241,6 +429,8 @@ function EventReport() {
             n="03"
             title="What Similar Events Have Done"
             sub="history, not a forecast"
+            href="/methodology"
+            hash="precedents"
           />
 
           {pe.based_on && pe.based_on.length > 0 && (
@@ -260,6 +450,30 @@ function EventReport() {
                 ))}
               </ul>
             </div>
+          )}
+
+          {pe.sector_averages && pe.sector_averages.length > 0 && (
+            <>
+              <div className="mb-4 border border-hairline bg-panel p-4">
+                <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
+                  Sector Averages · Diverging From Zero
+                </div>
+                <PrecedentDivergingBars pe={pe} />
+              </div>
+
+              {pe.per_precedent && pe.per_precedent.length > 0 && (
+                <div className="mb-4 border border-hairline bg-panel p-4">
+                  <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
+                    Spread Across Precedents · Every Dot Is One Event
+                  </div>
+                  <PrecedentDotPlot pe={pe} />
+                </div>
+              )}
+
+              <p className="mb-4 max-w-3xl text-[13px] leading-relaxed text-text-secondary">
+                {precedentSpreadProse(pe)}
+              </p>
+            </>
           )}
 
           {pe.sector_averages && pe.sector_averages.length > 0 && (
@@ -313,6 +527,23 @@ function EventReport() {
 
           {(pe.avg_vix_change || pe.avg_volatility_ratio) && (
             <div className="mt-4 grid gap-3 md:grid-cols-2">
+              <div className="border border-hairline bg-panel p-4">
+                <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
+                  VIX Response · Individual Precedents
+                </div>
+                <PrecedentVixStrip pe={pe} />
+              </div>
+              <div className="border border-hairline bg-panel p-4">
+                <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
+                  Volatility Ratios · By Sector
+                </div>
+                <PrecedentVolatilityLollipop pe={pe} />
+              </div>
+            </div>
+          )}
+
+          {(pe.avg_vix_change || pe.avg_volatility_ratio) && (
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
               {pe.avg_vix_change && (
                 <div className="border border-hairline bg-panel p-4">
                   <div className="mono text-[10px] uppercase tracking-[0.16em] text-text-muted">
@@ -350,6 +581,24 @@ function EventReport() {
           )}
         </section>
       )}
+
+      {e.important_notes &&
+        (e.important_notes.overall_applicability ||
+          (e.important_notes.notes && e.important_notes.notes.length > 0)) && (
+          <section className="mt-10">
+            <SectionTitle
+              n="03b"
+              title="Important Notes"
+              sub="context that shapes how to read the numbers"
+            />
+            <ImportantNotesBlock
+              notes={e.important_notes}
+              precedentNames={
+                new Map(precedents.map((p) => [p.id, p.event.name || p.id]))
+              }
+            />
+          </section>
+        )}
 
       <section className="mt-10">
         <SectionTitle n="04" title="How To Read This" />
@@ -418,6 +667,21 @@ function EventReport() {
             </div>
           )}
 
+          {showReactionBars && (
+            <p className="mt-3 max-w-3xl text-[13px] leading-relaxed text-text-secondary">
+              {reactionProse(e.reaction, e.event.type_label)}
+            </p>
+          )}
+
+          {e.companies_involved && e.companies_involved.length > 0 && (
+            <div className="mt-6">
+              <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
+                Companies Involved · By Sector
+              </div>
+              <CompaniesInvolvedBlock items={e.companies_involved} />
+            </div>
+          )}
+
           {!isBreaking && e.lasting_finding && (
             <div className="mt-4 border-l-2 border-amber bg-amber/5 p-4">
               <div className="mono text-[10px] uppercase tracking-[0.16em] text-amber">
@@ -433,12 +697,26 @@ function EventReport() {
 
       {!isBreaking && e.volatility && (e.volatility.vix || e.volatility.sectors?.length) && (
         <section className="mt-10">
-          <SectionTitle n="06" title="Volatility" sub="how erratic prices became" />
+          <SectionTitle
+            n="06"
+            title="Volatility"
+            sub="how erratic prices became"
+            href="/methodology"
+            hash="volatility"
+          />
           <p className="mb-3 max-w-3xl text-[13px] text-text-secondary">
             Volatility measures how erratic prices became, a separate signal from the
             direction of the move.
           </p>
           <VolatilityBlock v={e.volatility} />
+          {(e.volatility.vix || e.volatility.sectors?.length) && (
+            <div className="mt-3 max-w-3xl space-y-2 text-[13px] leading-relaxed text-text-secondary">
+              {e.volatility.vix && <p>{vixProse(e.volatility.vix)}</p>}
+              {e.volatility.sectors && e.volatility.sectors.length > 0 && (
+                <p>{volSectorsProse(e.volatility.sectors)}</p>
+              )}
+            </div>
+          )}
         </section>
       )}
 
@@ -486,6 +764,9 @@ function EventReport() {
               </tbody>
             </table>
           </div>
+          <p className="mt-3 max-w-3xl text-[13px] leading-relaxed text-text-secondary">
+            {phasesProse(e.phases)}
+          </p>
         </section>
       )}
 
@@ -536,7 +817,13 @@ function EventReport() {
 
       {precedents.length > 0 && (
         <section className="mt-10">
-          <SectionTitle n="09" title="Historical Precedents" sub="click to expand" />
+          <SectionTitle
+            n="09"
+            title="Historical Precedents"
+            sub="click to expand"
+            href="/methodology"
+            hash="precedents"
+          />
           <MatchedPrecedents items={precedents} />
         </section>
       )}

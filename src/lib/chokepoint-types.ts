@@ -82,6 +82,39 @@ export interface EventRecord {
   precedent_expectation?: PrecedentExpectation;
   confidence: string;
   disclaimer: string;
+  transmission_mechanism?: string;
+  companies_involved?: CompanyInvolved[];
+  important_notes?: ImportantNotes | null;
+}
+
+export interface CompanyInvolved {
+  ticker: string;
+  name: string;
+  role: string;
+  exposure: "direct" | "indirect" | "beneficiary";
+}
+
+export type NoteCategory =
+  | "structural"
+  | "regime"
+  | "market_structure"
+  | "confounding"
+  | "scale"
+  | "regional";
+
+export type NoteDirection = "amplifies" | "dampens" | "uncertain";
+
+export interface ImportantNote {
+  title: string;
+  category: NoteCategory;
+  detail: string;
+  affects?: string[];
+  direction: NoteDirection;
+}
+
+export interface ImportantNotes {
+  overall_applicability: string;
+  notes: ImportantNote[];
 }
 
 export interface Volatility {
@@ -120,10 +153,32 @@ export interface PrecedentExpectation {
     direction: "gain" | "loss";
     consistency: string;
     n_significant: number;
+    range_low?: number | string;
+    range_high?: number | string;
+    spread?: number | string;
+    avg_value?: number;
   }[];
   avg_vix_change?: string | null;
   avg_volatility_ratio?: string | number | null;
   caveat: string;
+  per_precedent?: PerPrecedentEntry[];
+}
+
+export interface PerPrecedentSectorMove {
+  sector: string;
+  move: string;
+  value?: number;
+  t_stat?: number;
+  significant?: boolean;
+}
+
+export interface PerPrecedentEntry {
+  id?: string;
+  name: string;
+  date?: string;
+  sector_moves?: PerPrecedentSectorMove[];
+  vix_change?: string | number | null;
+  volatility_ratio?: string | number | null;
 }
 
 export interface TimelineEntry {
