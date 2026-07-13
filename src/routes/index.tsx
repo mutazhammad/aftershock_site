@@ -6,9 +6,11 @@ import { RecencyBadge, StatusBadge, TypeChip } from "@/components/chokepoint/Bad
 import {
   fetchEventLocations,
   fetchFeed,
+  fetchStats,
   formatDate,
   type EventLocation,
   type FeedItem,
+  type AftershockStats,
 } from "@/lib/aftershock-api";
 
 export const Route = createFileRoute("/")({
@@ -29,21 +31,27 @@ export const Route = createFileRoute("/")({
     ],
   }),
   loader: async () => {
-    const [feed, locs] = await Promise.all([
+    const [feed, locs, stats] = await Promise.all([
       fetchFeed().catch(() => [] as FeedItem[]),
       fetchEventLocations().catch(() => [] as EventLocation[]),
+      fetchStats().catch(
+        () => ({ events: 0, precedents: 0, rejected: null } as AftershockStats),
+      ),
     ]);
-    return { feed, locs };
+    return { feed, locs, stats };
   },
   component: LandingPage,
 });
 
 function LandingPage() {
-  const { feed, locs } = Route.useLoaderData() as {
+  const { feed, locs, stats } = Route.useLoaderData() as {
     feed: FeedItem[];
     locs: EventLocation[];
+    stats: AftershockStats;
   };
-  const count = feed.length;
+  const nEvents = stats.events || feed.length;
+  const nPrecedents = stats.precedents;
+  const nRejected = stats.rejected;
   const proofEvents = feed.slice(0, 3);
 
   return (
@@ -77,7 +85,17 @@ function LandingPage() {
               <span className="absolute inset-0 rounded-full bg-signal opacity-70 animate-ambient" />
               <span className="relative h-2 w-2 rounded-full bg-signal" />
             </span>
-            {count > 0 ? `${count} Events Tracked · Live` : "Aftershock · Live"}
+            {nEvents > 0 ? (
+              <>
+                {nEvents} Events Tracked
+                {nPrecedents > 0 ? ` · ${nPrecedents} Precedents Measured` : ""}
+                {typeof nRejected === "number" && nRejected > 0
+                  ? ` · ${nRejected} Rejected`
+                  : ""}
+              </>
+            ) : (
+              "Aftershock · Live"
+            )}
           </div>
 
           <h1
