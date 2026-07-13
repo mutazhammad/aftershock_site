@@ -157,6 +157,9 @@ export function normalizeRecord(id: string, raw: any): EventRecord {
     disclaimer:
       raw.disclaimer ??
       "This tool informs your decision. It does not give investment advice.",
+    transmission_mechanism: raw.transmission_mechanism ?? undefined,
+    companies_involved: raw.companies_involved ?? undefined,
+    important_notes: raw.important_notes ?? null,
   } as EventRecord;
 }
 
