@@ -667,6 +667,21 @@ function EventReport() {
             </div>
           )}
 
+          {showReactionBars && (
+            <p className="mt-3 max-w-3xl text-[13px] leading-relaxed text-text-secondary">
+              {reactionProse(e.reaction, e.event.type_label)}
+            </p>
+          )}
+
+          {e.companies_involved && e.companies_involved.length > 0 && (
+            <div className="mt-6">
+              <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
+                Companies Involved · By Sector
+              </div>
+              <CompaniesInvolvedBlock items={e.companies_involved} />
+            </div>
+          )}
+
           {!isBreaking && e.lasting_finding && (
             <div className="mt-4 border-l-2 border-amber bg-amber/5 p-4">
               <div className="mono text-[10px] uppercase tracking-[0.16em] text-amber">
@@ -682,12 +697,26 @@ function EventReport() {
 
       {!isBreaking && e.volatility && (e.volatility.vix || e.volatility.sectors?.length) && (
         <section className="mt-10">
-          <SectionTitle n="06" title="Volatility" sub="how erratic prices became" />
+          <SectionTitle
+            n="06"
+            title="Volatility"
+            sub="how erratic prices became"
+            href="/methodology"
+            hash="volatility"
+          />
           <p className="mb-3 max-w-3xl text-[13px] text-text-secondary">
             Volatility measures how erratic prices became, a separate signal from the
             direction of the move.
           </p>
           <VolatilityBlock v={e.volatility} />
+          {(e.volatility.vix || e.volatility.sectors?.length) && (
+            <div className="mt-3 max-w-3xl space-y-2 text-[13px] leading-relaxed text-text-secondary">
+              {e.volatility.vix && <p>{vixProse(e.volatility.vix)}</p>}
+              {e.volatility.sectors && e.volatility.sectors.length > 0 && (
+                <p>{volSectorsProse(e.volatility.sectors)}</p>
+              )}
+            </div>
+          )}
         </section>
       )}
 
@@ -735,6 +764,9 @@ function EventReport() {
               </tbody>
             </table>
           </div>
+          <p className="mt-3 max-w-3xl text-[13px] leading-relaxed text-text-secondary">
+            {phasesProse(e.phases)}
+          </p>
         </section>
       )}
 
@@ -785,7 +817,13 @@ function EventReport() {
 
       {precedents.length > 0 && (
         <section className="mt-10">
-          <SectionTitle n="09" title="Historical Precedents" sub="click to expand" />
+          <SectionTitle
+            n="09"
+            title="Historical Precedents"
+            sub="click to expand"
+            href="/methodology"
+            hash="precedents"
+          />
           <MatchedPrecedents items={precedents} />
         </section>
       )}
