@@ -282,7 +282,14 @@ function EventReport() {
             <div className="flex flex-wrap items-center gap-2">
               {e.event.type_label && <TypeChip label={e.event.type_label} />}
               <StatusBadge status={e.status} />
-              <RecencyBadge recency={e.recency} />
+              <Link
+                to="/methodology"
+                hash="lifecycle"
+                title="How the event lifecycle works"
+                className="inline-flex"
+              >
+                <RecencyBadge recency={e.recency} />
+              </Link>
               {e.location?.name && (
                 <span className="mono text-[10.5px] uppercase tracking-[0.14em] text-text-muted">
                   · {e.location.name}
@@ -361,7 +368,11 @@ function EventReport() {
           )}
           {e.timing_note && <TransparencyCard label="Timing" text={e.timing_note} />}
           {e.date_explanation && (
-            <TransparencyCard label="About This Date" text={e.date_explanation} />
+            <TransparencyCard
+              label="About This Date"
+              text={e.date_explanation}
+              linkHash="information-date"
+            />
           )}
         </section>
       )}
