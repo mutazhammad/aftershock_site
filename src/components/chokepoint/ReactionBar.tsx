@@ -1,4 +1,5 @@
 import type { ReactionRow } from "@/lib/chokepoint-types";
+import { Link } from "@tanstack/react-router";
 
 function parsePct(p: string): number {
   const n = parseFloat(p.replace("%", "").replace("+", ""));
@@ -85,9 +86,14 @@ export function ReactionBar({ row }: { row: ReactionRow }) {
               significant
             </span>
           ) : (
-            <span className="mono border border-hairline px-1.5 py-0.5 text-[9px] uppercase tracking-[0.14em] text-text-muted">
+            <Link
+              to="/methodology"
+              hash="significance"
+              className="mono border border-hairline px-1.5 py-0.5 text-[9px] uppercase tracking-[0.14em] text-text-muted underline decoration-signal/40 decoration-dotted underline-offset-2 hover:text-signal hover:decoration-signal"
+              title="Why is this greyed out?"
+            >
               not significant
-            </span>
+            </Link>
           )}
           {typeof row.t_stat === "number" && (
             <span className="mono text-[9px] text-text-muted">

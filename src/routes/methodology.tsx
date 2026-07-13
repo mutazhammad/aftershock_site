@@ -20,9 +20,19 @@ export const Route = createFileRoute("/methodology")({
   component: MethodologyPage,
 });
 
-function Section({ n, title, children }: { n: string; title: string; children: React.ReactNode }) {
+function Section({
+  n,
+  title,
+  id,
+  children,
+}: {
+  n: string;
+  title: string;
+  id?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <section className="mt-10">
+    <section id={id} className="mt-10 scroll-mt-24">
       <div className="mb-3 flex items-baseline gap-3 border-b border-hairline pb-2">
         <span className="mono text-[10px] uppercase tracking-[0.18em] text-text-muted">{n}</span>
         <h2 className="text-[16px] font-semibold tracking-tight">{title}</h2>
@@ -61,7 +71,7 @@ function MethodologyPage() {
         </p>
       </Section>
 
-      <Section n="02" title="Why We Anchor To The Information Date, Not The Announcement">
+      <Section n="02" id="information-date" title="Why We Anchor To The Information Date, Not The Announcement">
         <p>
           Markets react to information, not to press releases. By the time an announcement is issued
           the price has usually already moved, sometimes days before. If we measured from the
@@ -76,7 +86,7 @@ function MethodologyPage() {
         </p>
       </Section>
 
-      <Section n="03" title="Statistical Significance vs. Market Noise">
+      <Section n="03" id="significance" title="Statistical Significance vs. Market Noise">
         <p>
           Every sector basket has its own normal weekly swing. A move only counts as{" "}
           <span className="text-text-primary">statistically significant</span> when it sits clearly
@@ -91,7 +101,7 @@ function MethodologyPage() {
         </p>
       </Section>
 
-      <Section n="04" title="Volatility: A Separate Signal">
+      <Section n="04" id="volatility" title="Volatility: A Separate Signal">
         <p>
           Direction is only half the story. A sector can end the week roughly flat and still have
           traded wildly along the way, and a rising VIX tells you the whole market got scared even
@@ -117,7 +127,7 @@ function MethodologyPage() {
         </p>
       </Section>
 
-      <Section n="05" title="The Event Lifecycle: Breaking → Developing → Settled">
+      <Section n="05" id="lifecycle" title="The Event Lifecycle: Breaking, Developing, Settled">
         <p>
           Every event moves through three states as market data accumulates:
         </p>
@@ -139,12 +149,28 @@ function MethodologyPage() {
         </ul>
       </Section>
 
-      <Section n="06" title="The Confounding Problem">
+      <Section n="06" id="confounding" title="The Confounding Problem">
         <p>
           Multiple things happen every week. When a Fed decision, an earnings surprise and a
           geopolitical shock all land in the same window, a market move can't cleanly be pinned to
           one of them. Where relevant, reports flag confounding events so you can weigh the
           attribution yourself instead of assuming a single cause.
+        </p>
+      </Section>
+
+      <Section n="06b" id="precedents" title="The Precedent Library">
+        <p>
+          Every settled event joins a library of precedents. When a new breaking event arrives, the
+          engine looks up structurally similar past events and reports what actually happened in
+          those windows, with the same significance tests applied to both. This is why a breaking
+          report can show numbers on day one, none of them predictions, all of them measured
+          history.
+        </p>
+        <p>
+          A precedent is only kept if it passes its own measurement. When a historical parallel
+          fails the same statistical test we apply to live events, it is discarded rather than
+          published. What you see in a precedent list is the surviving evidence, not everything the
+          engine considered.
         </p>
       </Section>
 

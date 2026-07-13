@@ -26,6 +26,7 @@ export function Chrome({ children }: { children: ReactNode }) {
             <NavLink to="/">Home</NavLink>
             <NavLink to="/events">Events</NavLink>
             <NavLink to="/methodology">Methodology</NavLink>
+            <NavLink to="/build-notes">Build Notes</NavLink>
           </nav>
         </div>
       </header>
