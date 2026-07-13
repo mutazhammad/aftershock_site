@@ -355,9 +355,24 @@ function EventReport() {
       {e.summary && (
         <section className="mt-10">
           <SectionTitle n="01" title="What Happened" />
-          <p className="max-w-3xl text-[14.5px] leading-relaxed text-text-primary">
+          <p className="max-w-3xl text-[14.5px] leading-[1.75] text-text-primary whitespace-pre-line">
             {e.summary}
           </p>
+        </section>
+      )}
+
+      {e.transmission_mechanism && (
+        <section className="mt-10">
+          <SectionTitle
+            n="01b"
+            title="How This Reaches Markets"
+            sub="the causal chain"
+          />
+          <div className="max-w-3xl border-l-2 border-signal bg-signal/5 p-5">
+            <p className="text-[14.5px] leading-[1.75] text-text-primary whitespace-pre-line">
+              {e.transmission_mechanism}
+            </p>
+          </div>
         </section>
       )}
 
