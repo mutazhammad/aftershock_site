@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as MethodologyRouteImport } from './routes/methodology'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as BuildNotesRouteImport } from './routes/build-notes'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EventIdRouteImport } from './routes/event.$id'
 
@@ -22,6 +23,11 @@ const MethodologyRoute = MethodologyRouteImport.update({
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuildNotesRoute = BuildNotesRouteImport.update({
+  id: '/build-notes',
+  path: '/build-notes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -37,12 +43,14 @@ const EventIdRoute = EventIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/build-notes': typeof BuildNotesRoute
   '/events': typeof EventsRoute
   '/methodology': typeof MethodologyRoute
   '/event/$id': typeof EventIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/build-notes': typeof BuildNotesRoute
   '/events': typeof EventsRoute
   '/methodology': typeof MethodologyRoute
   '/event/$id': typeof EventIdRoute
@@ -50,20 +58,28 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/build-notes': typeof BuildNotesRoute
   '/events': typeof EventsRoute
   '/methodology': typeof MethodologyRoute
   '/event/$id': typeof EventIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/events' | '/methodology' | '/event/$id'
+  fullPaths: '/' | '/build-notes' | '/events' | '/methodology' | '/event/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/events' | '/methodology' | '/event/$id'
-  id: '__root__' | '/' | '/events' | '/methodology' | '/event/$id'
+  to: '/' | '/build-notes' | '/events' | '/methodology' | '/event/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/build-notes'
+    | '/events'
+    | '/methodology'
+    | '/event/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BuildNotesRoute: typeof BuildNotesRoute
   EventsRoute: typeof EventsRoute
   MethodologyRoute: typeof MethodologyRoute
   EventIdRoute: typeof EventIdRoute
@@ -85,6 +101,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/build-notes': {
+      id: '/build-notes'
+      path: '/build-notes'
+      fullPath: '/build-notes'
+      preLoaderRoute: typeof BuildNotesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -104,6 +127,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BuildNotesRoute: BuildNotesRoute,
   EventsRoute: EventsRoute,
   MethodologyRoute: MethodologyRoute,
   EventIdRoute: EventIdRoute,
