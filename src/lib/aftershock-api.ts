@@ -17,6 +17,7 @@ export interface FeedItem {
   status: "confirmed" | "disputed";
   recency: "breaking" | "developing" | "settled";
   region: string;
+  data?: any;
 }
 
 /** Format YYYY-MM-DD as "27 Feb 2026", stable across server/client. */
@@ -30,10 +31,45 @@ export function formatDate(iso: string): string {
 }
 
 export async function fetchFeed(): Promise<FeedItem[]> {
-  const url = `${SUPABASE_URL}/rest/v1/events?select=id,name,type_label,information_date,status,recency,region&order=information_date.desc`;
+  const url = `${SUPABASE_URL}/rest/v1/events?select=id,name,type_label,information_date,status,recency,region,data&order=information_date.desc`;
   const res = await fetch(url, { headers: HEADERS });
   if (!res.ok) throw new Error(`Feed fetch failed: ${res.status}`);
   return (await res.json()) as FeedItem[];
+}
+
+export interface AftershockStats {
+  events: number;
+  precedents: number;
+  rejected: number | null;
+}
+
+/** Homepage stat line. Counts events, curated precedents, and rejected
+ *  precedents when the backend exposes a rejected flag or table. */
+export async function fetchStats(): Promise<AftershockStats> {
+  const countHeaders = { ...HEADERS, Prefer: "count=exact", Range: "0-0" };
+  const readCount = async (path: string): Promise<number | null> => {
+    try {
+      const r = await fetch(`${SUPABASE_URL}${path}`, { headers: countHeaders });
+      if (!r.ok) return null;
+      const cr = r.headers.get("content-range") ?? "";
+      const m = /\/(\d+|\*)$/.exec(cr);
+      if (!m || m[1] === "*") return null;
+      return parseInt(m[1], 10);
+    } catch {
+      return null;
+    }
+  };
+  const [events, precedents, rejectedA, rejectedB] = await Promise.all([
+    readCount(`/rest/v1/events?select=id`),
+    readCount(`/rest/v1/curated_precedents?select=id`),
+    readCount(`/rest/v1/rejected_precedents?select=id`),
+    readCount(`/rest/v1/curated_precedents?select=id&rejected=eq.true`),
+  ]);
+  return {
+    events: events ?? 0,
+    precedents: precedents ?? 0,
+    rejected: rejectedA ?? rejectedB,
+  };
 }
 
 export interface EventLocation {
