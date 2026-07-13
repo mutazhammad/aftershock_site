@@ -82,6 +82,9 @@ export interface EventRecord {
   precedent_expectation?: PrecedentExpectation;
   confidence: string;
   disclaimer: string;
+  transmission_mechanism?: string;
+  companies_involved?: CompanyInvolved[];
+  important_notes?: ImportantNotes | null;
 }
 
 export interface CompanyInvolved {
