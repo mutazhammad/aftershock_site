@@ -4,13 +4,13 @@ import { Chrome } from "@/components/chokepoint/Chrome";
 export const Route = createFileRoute("/build-notes")({
   head: () => ({
     meta: [
-      { title: "Build Notes · Aftershock" },
+      { title: "Build Notes, Aftershock" },
       {
         name: "description",
         content:
           "The architecture behind Aftershock, and the real decisions that shaped it. Written in an engineering voice, unhedged.",
       },
-      { property: "og:title", content: "Build Notes · Aftershock" },
+      { property: "og:title", content: "Build Notes, Aftershock" },
       {
         property: "og:description",
         content:

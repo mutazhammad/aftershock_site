@@ -16,7 +16,7 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Aftershock. Panic Is Not A Strategy." },
+      { title: "Aftershock, Geopolitical Market Intelligence" },
       {
         name: "description",
         content:
