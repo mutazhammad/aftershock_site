@@ -19,6 +19,8 @@ export const Route = createFileRoute("/events")({
         content:
           "Live watch list of geopolitical events and their measured market reactions.",
       },
+      { property: "og:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
+      { name: "twitter:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
     ],
   }),
   loader: () => fetchFeed(),

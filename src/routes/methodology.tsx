@@ -15,6 +15,8 @@ export const Route = createFileRoute("/methodology")({
         property: "og:description",
         content: "Event studies, information-date anchoring, significance filtering, and honesty principles.",
       },
+      { property: "og:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
+      { name: "twitter:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
     ],
   }),
   component: MethodologyPage,

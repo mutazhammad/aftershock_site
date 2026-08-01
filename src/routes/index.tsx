@@ -28,6 +28,8 @@ export const Route = createFileRoute("/")({
         content:
           "How geopolitical events move markets. Measured, not guessed.",
       },
+      { property: "og:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
+      { name: "twitter:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
     ],
   }),
   loader: async () => {

@@ -38,6 +38,8 @@ export const Route = createFileRoute("/event/$id")({
         { name: "description", content: `Measured market reaction to ${name}.` },
         { property: "og:title", content: `${name}, Aftershock` },
         { property: "og:description", content: `Measured market reaction to ${name}.` },
+        { property: "og:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
+        { name: "twitter:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
       ],
     };
   },

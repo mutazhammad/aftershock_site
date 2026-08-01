@@ -16,6 +16,8 @@ export const Route = createFileRoute("/build-notes")({
         content:
           "The architecture behind Aftershock, and the real decisions that shaped it.",
       },
+      { property: "og:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
+      { name: "twitter:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
     ],
   }),
   component: BuildNotesPage,
