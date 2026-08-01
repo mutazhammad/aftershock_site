@@ -77,18 +77,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Aftershock" },
-      { name: "description", content: "How geopolitical events have historically moved financial markets. Measured data, not advice." },
-      { property: "og:title", content: "Aftershock" },
-      { property: "og:description", content: "Decision-support intelligence for investors. Measured data, not advice." },
+      { title: "Aftershock, Geopolitical Market Intelligence" },
+      {
+        name: "description",
+        content:
+          "Aftershock measures how geopolitical events move financial markets. Which sectors move, by how much, and what history says happens next.",
+      },
+      { property: "og:site_name", content: "Aftershock" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Oswald:wght@400;500;600;700&display=swap" },
+      { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png" },
+      { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16.png" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
       {
         rel: "stylesheet",
         href: appCss,
