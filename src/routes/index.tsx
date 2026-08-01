@@ -1,3 +1,4 @@
+import { WordmarkCompact, WordmarkFull } from "@/components/chokepoint/Brand";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Chrome } from "@/components/chokepoint/Chrome";

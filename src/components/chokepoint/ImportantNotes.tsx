@@ -35,7 +35,7 @@ export function ImportantNotesBlock({
               ? { arrow: "▲", color: "text-ember", label: "Amplifies" }
               : n.direction === "dampens"
               ? { arrow: "▼", color: "text-verdigris", label: "Dampens" }
-              : { arrow: "–", color: "text-ash", label: "Uncertain" };
+              : { arrow: "~", color: "text-ash", label: "Uncertain" };
           return (
             <div key={i} className="border border-hairline bg-panel p-4">
               <div className="flex items-start justify-between gap-3">
