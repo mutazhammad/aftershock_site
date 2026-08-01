@@ -273,9 +273,12 @@ function LandingPage() {
       </section>
 
       <footer className="relative z-10 border-t border-steel bg-abyss">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-5 py-6 mono text-[11px] text-ash">
-          <span>This tool informs your decision. It does not give investment advice.</span>
-          <span>Built by Mutaz Hammad.</span>
+        <div className="mx-auto flex max-w-6xl flex-wrap items-end justify-between gap-6 px-5 py-8">
+          <WordmarkFull />
+          <div className="mono flex flex-col items-start gap-1 text-[11px] text-ash sm:items-end">
+            <span>This tool informs your decision. It does not give investment advice.</span>
+            <span>Built by Mutaz Hammad.</span>
+          </div>
         </div>
       </footer>
     </div>
@@ -297,15 +300,13 @@ function TopNav() {
       }`}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="flex h-7 w-7 items-center justify-center border border-signal/60 text-signal mono text-[11px] font-semibold">
-            AS
-          </div>
-          <div className="display text-[16px] tracking-[0.02em] text-bone">Aftershock</div>
+        <Link to="/" aria-label="Aftershock, home">
+          <WordmarkCompact />
         </Link>
         <nav className="mono flex items-center gap-4 text-[11px] uppercase tracking-[0.22em] text-bone/70">
           <Link to="/events" className="hover:text-ice">Events</Link>
           <Link to="/methodology" className="hover:text-ice">Methodology</Link>
+          <Link to="/build-notes" className="hover:text-ice">Build Notes</Link>
         </nav>
       </div>
     </header>
