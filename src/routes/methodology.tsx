@@ -4,17 +4,19 @@ import { Chrome } from "@/components/chokepoint/Chrome";
 export const Route = createFileRoute("/methodology")({
   head: () => ({
     meta: [
-      { title: "Methodology · Aftershock" },
+      { title: "Methodology, Aftershock" },
       {
         name: "description",
         content:
           "How Aftershock measures market reactions to geopolitical events using event studies, information-date anchoring, and significance filtering.",
       },
-      { property: "og:title", content: "Methodology · Aftershock" },
+      { property: "og:title", content: "Methodology, Aftershock" },
       {
         property: "og:description",
         content: "Event studies, information-date anchoring, significance filtering, and honesty principles.",
       },
+      { property: "og:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
+      { name: "twitter:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
     ],
   }),
   component: MethodologyPage,

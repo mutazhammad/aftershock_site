@@ -34,10 +34,12 @@ export const Route = createFileRoute("/event/$id")({
     const name = loaderData?.record.event.name ?? "Event";
     return {
       meta: [
-        { title: `${name} · Aftershock` },
+        { title: `${name}, Aftershock` },
         { name: "description", content: `Measured market reaction to ${name}.` },
-        { property: "og:title", content: `${name} · Aftershock` },
+        { property: "og:title", content: `${name}, Aftershock` },
         { property: "og:description", content: `Measured market reaction to ${name}.` },
+        { property: "og:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
+        { name: "twitter:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
       ],
     };
   },

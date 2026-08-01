@@ -7,18 +7,20 @@ import { fetchFeed, type FeedItem } from "@/lib/aftershock-api";
 export const Route = createFileRoute("/events")({
   head: () => ({
     meta: [
-      { title: "Events · Aftershock" },
+      { title: "Events, Aftershock" },
       {
         name: "description",
         content:
           "Live watch list of geopolitical events and their measured market reactions.",
       },
-      { property: "og:title", content: "Events · Aftershock" },
+      { property: "og:title", content: "Events, Aftershock" },
       {
         property: "og:description",
         content:
           "Live watch list of geopolitical events and their measured market reactions.",
       },
+      { property: "og:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
+      { name: "twitter:image", content: "https://geofin-context-engine.lovable.app/og-image.png" },
     ],
   }),
   loader: () => fetchFeed(),

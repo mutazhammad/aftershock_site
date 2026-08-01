@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
+import { WordmarkCompact, WordmarkFull } from "./Brand";
 
 export function Chrome({ children }: { children: ReactNode }) {
   return (
@@ -11,16 +12,8 @@ export function Chrome({ children }: { children: ReactNode }) {
 
       <header className="relative z-10 border-b border-hairline/80 bg-abyss/70 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4">
-          <Link to="/" className="flex items-center gap-3 min-w-0">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center border border-signal/60 text-signal mono text-[11px] font-semibold">
-              AS
-            </div>
-            <div className="leading-tight min-w-0">
-              <div className="display text-[16px] tracking-[0.02em] text-bone truncate">Aftershock</div>
-              <div className="mono text-[9.5px] uppercase tracking-[0.22em] text-text-muted truncate">
-                Geopolitical market intelligence
-              </div>
-            </div>
+          <Link to="/" className="min-w-0" aria-label="Aftershock, home">
+            <WordmarkCompact />
           </Link>
           <nav className="flex items-center gap-1 mono text-[11px] uppercase tracking-[0.18em]">
             <NavLink to="/">Home</NavLink>
@@ -32,9 +25,12 @@ export function Chrome({ children }: { children: ReactNode }) {
       </header>
       <main className="relative z-10 mx-auto w-full max-w-6xl flex-1 px-5 py-8">{children}</main>
       <footer className="relative z-10 mt-16 border-t border-hairline bg-abyss/60">
-        <div className="mx-auto max-w-6xl px-5 py-6 mono text-[11px] text-text-muted flex flex-wrap items-center justify-between gap-2">
-          <span>This tool informs your decision. It does not give investment advice.</span>
-          <span>Built by Mutaz Hammad.</span>
+        <div className="mx-auto max-w-6xl px-5 py-8 flex flex-wrap items-end justify-between gap-6">
+          <WordmarkFull />
+          <div className="mono text-[11px] text-text-muted flex flex-col items-start gap-1 sm:items-end">
+            <span>This tool informs your decision. It does not give investment advice.</span>
+            <span>Built by Mutaz Hammad.</span>
+          </div>
         </div>
       </footer>
     </div>
