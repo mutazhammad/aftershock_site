@@ -518,28 +518,31 @@ function EventReport() {
             <>
               <div className="mb-4 border border-hairline bg-panel p-4">
                 <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
-                  Sector Averages · Diverging From Zero
+                  What Happened In Comparable Events
                 </div>
                 <PrecedentDivergingBars pe={pe} />
+                <Caption>Average move across all validated precedents.</Caption>
               </div>
 
-              {pe.per_precedent && pe.per_precedent.length > 0 && (
-                <div className="mb-4 border border-hairline bg-panel p-4">
-                  <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
-                    Spread Across Precedents · Every Dot Is One Event
-                  </div>
-                  <PrecedentDotPlot pe={pe} />
-                </div>
-              )}
-
-              <p className="mb-4 max-w-3xl text-[13px] leading-relaxed text-text-secondary">
+              <p className="max-w-3xl text-[13px] leading-relaxed text-text-secondary">
                 {precedentSpreadProse(pe)}
               </p>
-            </>
-          )}
 
-          {pe.sector_averages && pe.sector_averages.length > 0 && (
-            <div className="overflow-x-auto border border-hairline">
+              <Disclosure label="Show precedent-by-precedent spread">
+                {pe.per_precedent && pe.per_precedent.length > 0 && (
+                  <div className="border border-hairline bg-panel p-4">
+                    <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
+                      How Consistent Was The Pattern
+                    </div>
+                    <PrecedentDotPlot pe={pe} />
+                    <Caption>
+                      Each dot is one precedent. Shows whether the average reflects a
+                      consistent pattern or a wide scatter.
+                    </Caption>
+                  </div>
+                )}
+                <div>
+                  <div className="overflow-x-auto border border-hairline">
               <table className="w-full text-left text-[13px]">
                 <thead className="bg-panel">
                   <tr className="border-b border-hairline">
@@ -561,7 +564,7 @@ function EventReport() {
                       <tr
                         key={s.sector}
                         className={`border-b border-hairline/60 last:border-b-0 ${
-                          muted ? "opacity-60" : ""
+                          muted ? "opacity-55 text-[11.5px]" : ""
                         }`}
                       >
                         <td className="px-4 py-2.5 text-text-primary">{s.sector}</td>
@@ -574,7 +577,13 @@ function EventReport() {
                               : "text-red font-semibold"
                           }`}
                         >
-                          {s.avg_move}
+                          <div>Average: {s.avg_move}</div>
+                          {s.avg_move_significant_only != null &&
+                            s.avg_move_significant_only !== "" && (
+                              <div className="text-[11px] text-signal">
+                                Among significant results: {s.avg_move_significant_only}
+                              </div>
+                            )}
                         </td>
                         <td className="px-4 py-2.5 mono text-[12px] text-text-secondary">
                           {s.consistency}
@@ -584,22 +593,34 @@ function EventReport() {
                   })}
                 </tbody>
               </table>
-            </div>
+                  </div>
+                  <Caption>Per-sector significance counts across the precedent set.</Caption>
+                </div>
+              </Disclosure>
+            </>
           )}
 
           {(pe.avg_vix_change || pe.avg_volatility_ratio) && (
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               <div className="border border-hairline bg-panel p-4">
                 <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
-                  VIX Response · Individual Precedents
+                  Market Fear In Comparable Events
                 </div>
                 <PrecedentVixStrip pe={pe} />
+                <Caption>
+                  One row per precedent, so you can see whether fear rose in every case or
+                  only one.
+                </Caption>
               </div>
               <div className="border border-hairline bg-panel p-4">
                 <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
-                  Volatility Ratios · By Sector
+                  Volatility In Comparable Events
                 </div>
                 <PrecedentVolatilityLollipop pe={pe} />
+                <Caption>
+                  Distance from the 1.00 baseline shows how much wider prices swung after
+                  each precedent.
+                </Caption>
               </div>
             </div>
           )}
@@ -614,6 +635,7 @@ function EventReport() {
                   <div className="mono mt-2 text-[24px] font-semibold text-red">
                     {pe.avg_vix_change}
                   </div>
+                  <Caption>The single headline figure for market-wide fear.</Caption>
                 </div>
               )}
               {pe.avg_volatility_ratio != null && (
@@ -626,6 +648,9 @@ function EventReport() {
                       ? `${pe.avg_volatility_ratio.toFixed(2)}×`
                       : pe.avg_volatility_ratio}
                   </div>
+                  <Caption>
+                    The single headline figure for how erratic prices became.
+                  </Caption>
                 </div>
               )}
             </div>
@@ -644,21 +669,44 @@ function EventReport() {
         </section>
       )}
 
-      {e.important_notes &&
-        (e.important_notes.overall_applicability ||
-          (e.important_notes.notes && e.important_notes.notes.length > 0)) && (
+      {showNoPrecedents && (
+        <section className="mt-10">
+          <div className="border border-steel bg-panel p-6">
+            <h2 className="display text-[20px] tracking-wide text-ash">
+              No Validated Precedents
+            </h2>
+            <p className="mt-3 max-w-3xl text-[13.5px] leading-relaxed text-ash">
+              The system researched historical parallels for this event and measured each
+              one against market data. None survived validation. A precedent is only used
+              when its own measurement holds up, so this report carries no historical
+              comparison.
+            </p>
+            <Link
+              to="/methodology"
+              hash="precedents"
+              className="mono mt-4 inline-block text-[11px] uppercase tracking-[0.14em] text-signal underline decoration-signal/50 underline-offset-4 hover:text-ice"
+            >
+              How precedents are validated
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {notes &&
+        (notes.overall_applicability ||
+          (notes.notes && notes.notes.length > 0)) && (
           <section className="mt-10">
             <SectionTitle
-              n="03b"
-              title="Important Notes"
-              sub="context that shapes how to read the numbers"
+              n="06"
+              title="What Has Changed Since"
+              sub="Substantive differences between the precedent conditions and today."
             />
-            <ImportantNotesBlock
-              notes={e.important_notes}
-              precedentNames={
-                new Map(precedents.map((p) => [p.id, p.event.name || p.id]))
-              }
-            />
+            {!verdict && notes.verdict && (
+              <div className="mb-4">
+                <VerdictLine verdict={notes.verdict} />
+              </div>
+            )}
+            <ImportantNotesBlock notes={notes} precedentNames={precedentNames} />
           </section>
         )}
 
