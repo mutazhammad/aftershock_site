@@ -264,6 +264,14 @@ function EventReport() {
   const showChart = !isBreaking && hasTimeseries;
   const showReactionBars = !isBreaking && hasReactionData;
   const pe = e.precedent_expectation;
+  const dia = e.diagnostics;
+  const notes = e.important_notes;
+  const verdict = notes?.verdict ?? "";
+  const precedentNames = new Map<string, string>();
+  for (const p of precedents) precedentNames.set(p.id, p.event.name || p.id);
+  for (const b of pe?.based_on ?? []) if (b.id) precedentNames.set(b.id, b.name);
+  const showNoPrecedents =
+    isBreaking && (!pe || !(pe.sector_averages ?? []).length);
 
   const inNews =
     (e.companies_in_news && e.companies_in_news.length > 0
@@ -367,10 +375,37 @@ function EventReport() {
         </section>
       )}
 
+      {dia && (
+        <section className="mt-10">
+          <SectionTitle
+            n="02"
+            title="Can These Numbers Be Trusted"
+            sub="Measurement quality checks on the precedents used below."
+            href="/methodology"
+            hash="causal-reading"
+          />
+          <DiagnosticsBlock d={dia} precedentNames={precedentNames} />
+        </section>
+      )}
+
+      {verdict && (
+        <section className="mt-8">
+          <VerdictLine verdict={verdict} />
+        </section>
+      )}
+
+      <div className="mt-14 flex items-center gap-4">
+        <span className="h-px flex-1 bg-steel" />
+        <span className="mono text-[10.5px] uppercase tracking-[0.28em] text-ash">
+          Full Analysis
+        </span>
+        <span className="h-px flex-1 bg-steel" />
+      </div>
+
       {e.transmission_mechanism && (
         <section className="mt-10">
           <SectionTitle
-            n="01b"
+            n="03"
             title="How This Reaches Markets"
             sub="the causal chain"
           />
@@ -379,6 +414,21 @@ function EventReport() {
               {e.transmission_mechanism}
             </p>
           </div>
+        </section>
+      )}
+
+      {e.companies_involved && e.companies_involved.length > 0 && (
+        <section className="mt-10">
+          <SectionTitle
+            n="04"
+            title="Companies Involved"
+            sub="Which companies this event touches, and how."
+          />
+          <CompaniesInvolvedBlock
+            items={[...e.companies_involved].sort(
+              (a, b) => rankExposure(a.exposure) - rankExposure(b.exposure),
+            )}
+          />
         </section>
       )}
 
