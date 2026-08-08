@@ -32,8 +32,15 @@ export function formatDate(iso: string): string {
 }
 
 export async function fetchFeed(): Promise<FeedItem[]> {
-  const url = `${SUPABASE_URL}/rest/v1/events?select=id,name,type_label,information_date,status,recency,region,created_at,data&order=information_date.desc`;
-  const res = await fetch(url, { headers: HEADERS });
+  const base = `${SUPABASE_URL}/rest/v1/events?select=`;
+  const tail = `&order=information_date.desc`;
+  const withCreated = `id,name,type_label,information_date,status,recency,region,created_at,data`;
+  const withoutCreated = `id,name,type_label,information_date,status,recency,region,data`;
+  let res = await fetch(`${base}${withCreated}${tail}`, { headers: HEADERS });
+  if (!res.ok) {
+    // Older schemas may not expose created_at.
+    res = await fetch(`${base}${withoutCreated}${tail}`, { headers: HEADERS });
+  }
   if (!res.ok) throw new Error(`Feed fetch failed: ${res.status}`);
   return (await res.json()) as FeedItem[];
 }
