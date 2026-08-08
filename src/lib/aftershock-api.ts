@@ -17,6 +17,7 @@ export interface FeedItem {
   status: "confirmed" | "disputed";
   recency: "breaking" | "developing" | "settled";
   region: string;
+  created_at?: string;
   data?: any;
 }
 
@@ -31,7 +32,7 @@ export function formatDate(iso: string): string {
 }
 
 export async function fetchFeed(): Promise<FeedItem[]> {
-  const url = `${SUPABASE_URL}/rest/v1/events?select=id,name,type_label,information_date,status,recency,region,data&order=information_date.desc`;
+  const url = `${SUPABASE_URL}/rest/v1/events?select=id,name,type_label,information_date,status,recency,region,created_at,data&order=information_date.desc`;
   const res = await fetch(url, { headers: HEADERS });
   if (!res.ok) throw new Error(`Feed fetch failed: ${res.status}`);
   return (await res.json()) as FeedItem[];
@@ -160,6 +161,7 @@ export function normalizeRecord(id: string, raw: any): EventRecord {
     transmission_mechanism: raw.transmission_mechanism ?? undefined,
     companies_involved: raw.companies_involved ?? undefined,
     important_notes: raw.important_notes ?? null,
+    diagnostics: raw.diagnostics ?? null,
   } as EventRecord;
 }
 

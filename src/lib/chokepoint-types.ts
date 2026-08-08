@@ -85,6 +85,7 @@ export interface EventRecord {
   transmission_mechanism?: string;
   companies_involved?: CompanyInvolved[];
   important_notes?: ImportantNotes | null;
+  diagnostics?: Diagnostics | null;
 }
 
 export interface CompanyInvolved {
@@ -113,8 +114,36 @@ export interface ImportantNote {
 }
 
 export interface ImportantNotes {
+  verdict?: string | null;
   overall_applicability: string;
   notes: ImportantNote[];
+}
+
+export interface ConcentrationFlag {
+  precedent: string;
+  sector: string;
+  ticker: string;
+  share: string;
+  detail: string;
+}
+
+export interface ConfoundingCheck {
+  precedent_id: string;
+  clean: boolean;
+  detail: string;
+}
+
+export interface AnticipationNote {
+  precedent: string;
+  detail: string;
+}
+
+export interface Diagnostics {
+  summary?: string;
+  date_basis?: string;
+  concentration?: ConcentrationFlag[];
+  confounding?: ConfoundingCheck[];
+  anticipation?: AnticipationNote[];
 }
 
 export interface Volatility {
@@ -157,6 +186,7 @@ export interface PrecedentExpectation {
     range_high?: number | string;
     spread?: number | string;
     avg_value?: number;
+    avg_move_significant_only?: string | number | null;
   }[];
   avg_vix_change?: string | null;
   avg_volatility_ratio?: string | number | null;
