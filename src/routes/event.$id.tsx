@@ -16,7 +16,11 @@ import {
   PrecedentVolatilityLollipop,
 } from "@/components/chokepoint/PrecedentCharts";
 import { CompaniesInvolvedBlock } from "@/components/chokepoint/CompaniesInvolved";
-import { ImportantNotesBlock } from "@/components/chokepoint/ImportantNotes";
+import { ImportantNotesBlock, VerdictLine } from "@/components/chokepoint/ImportantNotes";
+import { KeyTakeaway } from "@/components/chokepoint/KeyTakeaway";
+import { DiagnosticsBlock } from "@/components/chokepoint/Diagnostics";
+import { Disclosure } from "@/components/chokepoint/Disclosure";
+import { Caption } from "@/components/chokepoint/Caption";
 import { fetchEvent, fetchPrecedents } from "@/lib/aftershock-api";
 import type { EventRecord, ReactionRow } from "@/lib/chokepoint-types";
 
