@@ -88,6 +88,10 @@ function isSig(r: ReactionRow): boolean {
   return typeof r.t_stat === "number" ? Math.abs(r.t_stat) >= 2 : !!r.significant;
 }
 
+function rankExposure(x: string): number {
+  return x === "direct" ? 0 : x === "beneficiary" ? 1 : 2;
+}
+
 function reactionProse(reaction: ReactionRow[], typeLabel?: string): string {
   if (!reaction?.length) return "";
   const sorted = [...reaction].sort(
@@ -727,15 +731,6 @@ function EventReport() {
             <p className="mt-3 max-w-3xl text-[13px] leading-relaxed text-text-secondary">
               {reactionProse(e.reaction, e.event.type_label)}
             </p>
-          )}
-
-          {e.companies_involved && e.companies_involved.length > 0 && (
-            <div className="mt-6">
-              <div className="mono mb-2 text-[10px] uppercase tracking-[0.16em] text-text-muted">
-                Companies Involved · By Sector
-              </div>
-              <CompaniesInvolvedBlock items={e.companies_involved} />
-            </div>
           )}
 
           {!isBreaking && e.lasting_finding && (
