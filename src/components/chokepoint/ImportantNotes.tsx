@@ -4,10 +4,22 @@ const CAT_LABEL: Record<string, string> = {
   structural: "Structural",
   regime: "Regime",
   market_structure: "Market Structure",
-  confounding: "Confounding",
   scale: "Scale",
   regional: "Regional",
 };
+
+/** Prominent one-line conclusion, coloured by sentiment. */
+export function VerdictLine({ verdict }: { verdict: string }) {
+  const v = verdict.toLowerCase();
+  const color = v.includes("strong")
+    ? "text-verdigris"
+    : v.includes("weak")
+    ? "text-ember"
+    : "text-ash";
+  return (
+    <p className={`max-w-3xl text-[17px] leading-[1.6] ${color}`}>{verdict}</p>
+  );
+}
 
 export function ImportantNotesBlock({
   notes,
