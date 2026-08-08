@@ -40,17 +40,26 @@ export function PrecedentDivergingBars({ pe }: { pe: PrecedentExpectation }) {
         const pos = r.v >= 0;
         const width = (Math.abs(r.v) / max) * 50;
         const sig = (r.n_significant ?? 0) > 0;
+        const sigOnly = r.avg_move_significant_only;
         return (
           <div
             key={r.sector}
             className={`grid grid-cols-12 items-center gap-3 border-b border-hairline/70 px-3 py-2.5 last:border-b-0 ${
-              sig ? "" : "opacity-70"
+              sig ? "" : "py-1.5 opacity-55"
             }`}
           >
-            <div className="col-span-4 text-[12.5px] text-text-primary">
+            <div
+              className={`col-span-4 ${
+                sig ? "text-[12.5px] text-text-primary" : "text-[11px] text-ash"
+              }`}
+            >
               {r.sector}
             </div>
-            <div className="col-span-6 relative h-3 border border-steel/60 bg-abyss">
+            <div
+              className={`col-span-6 relative border border-steel/60 bg-abyss ${
+                sig ? "h-3" : "h-2"
+              }`}
+            >
               <div className="absolute left-1/2 top-[-3px] h-[18px] w-px bg-signal/40" />
               <div
                 className="absolute top-0 h-full"
@@ -74,10 +83,15 @@ export function PrecedentDivergingBars({ pe }: { pe: PrecedentExpectation }) {
             </div>
             <div
               className={`col-span-2 mono text-right text-[12px] ${
-                sig ? (pos ? "text-verdigris" : "text-ember") : "text-ash"
+                sig ? (pos ? "text-verdigris" : "text-ember") : "text-[10.5px] text-ash"
               }`}
             >
-              {r.avg_move}
+              <div>Average: {r.avg_move}</div>
+              {sigOnly != null && sigOnly !== "" && (
+                <div className="text-[10.5px] text-signal">
+                  Among significant results: {sigOnly}
+                </div>
+              )}
             </div>
           </div>
         );
