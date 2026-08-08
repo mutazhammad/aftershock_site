@@ -370,6 +370,8 @@ function EventReport() {
         </div>
       </section>
 
+      <KeyTakeaway e={e} />
+
       {e.summary && (
         <section className="mt-10">
           <SectionTitle n="01" title="What Happened" />
