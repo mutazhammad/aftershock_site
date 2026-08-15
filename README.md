@@ -58,9 +58,12 @@ One rule carries throughout: statistically significant results render solid and 
 
 ## Stack
 
-- **React** with Vite
+- **React 19** with **TanStack Start** and **TanStack Router**
+- **TanStack Query** for data fetching
+- **TypeScript**
+- **Tailwind CSS v4**
 - **Recharts** for charts
-- **react-simple-maps** for regional map backgrounds
+- **react-simple-maps** with **d3-geo** for regional map backgrounds
 - **Supabase JS client**, read-only, for data
 - **Vercel** for deployment
 
