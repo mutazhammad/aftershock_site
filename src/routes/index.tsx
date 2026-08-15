@@ -103,7 +103,7 @@ function LandingPage() {
           </div>
 
           <h1
-            className="display mt-6 text-[clamp(2.5rem,8.6vw,7.5rem)] leading-[0.92] tracking-[-0.005em] text-bone"
+            className="display mt-6 text-[clamp(2.1rem,8.6vw,7.5rem)] leading-[1.02] tracking-[-0.005em] text-bone sm:leading-[0.92]"
             style={{ textShadow: "0 0 45px rgba(63,169,245,0.14)" }}
           >
             Conflict Has A Price
