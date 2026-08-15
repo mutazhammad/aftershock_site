@@ -6,8 +6,11 @@ export function VolatilityBlock({ v }: { v: V }) {
     <div className="grid gap-4 md:grid-cols-2">
       {vix && (vix.change_pct || vix.plain || typeof vix.before === "number") && (
         <div className="border border-hairline bg-panel p-4">
-          <div className="mono text-[10px] uppercase tracking-[0.16em] text-text-muted">
-            Market Fear · VIX
+          <div className="text-[14px] font-semibold text-text-primary">
+            How Nervous The Market Got
+          </div>
+          <div className="mono text-[10.5px] uppercase tracking-[0.16em] text-text-muted">
+            VIX, the volatility index
           </div>
           <div
             className={`mono mt-2 text-[26px] font-semibold ${
@@ -37,8 +40,13 @@ export function VolatilityBlock({ v }: { v: V }) {
       )}
       {v.sectors && v.sectors.length > 0 && (
         <div className="border border-hairline bg-panel">
-          <div className="border-b border-hairline p-3 mono text-[10px] uppercase tracking-[0.16em] text-text-muted">
-            Sector Volatility · Before vs After
+          <div className="border-b border-hairline p-3">
+            <div className="text-[14px] font-semibold text-text-primary">
+              How Much Choppier Each Sector Got
+            </div>
+            <div className="mono text-[10.5px] uppercase tracking-[0.16em] text-text-muted">
+              Realised volatility, before vs after
+            </div>
           </div>
           <ul className="divide-y divide-hairline">
             {v.sectors.map((s) => (
@@ -48,14 +56,14 @@ export function VolatilityBlock({ v }: { v: V }) {
                   s.more_volatile ? "" : "opacity-70"
                 }`}
               >
-                <div>
-                  <div className="text-[13px] text-text-primary">{s.sector}</div>
-                  <div className="mono text-[10.5px] text-text-muted">
+                <div className="min-w-0">
+                  <div className="text-[14px] text-text-primary">{s.sector}</div>
+                  <div className="mono text-[11px] text-text-muted">
                     {s.vol_before} → {s.vol_after}
                   </div>
                 </div>
                 <div
-                  className={`mono text-[13px] font-semibold ${
+                  className={`mono shrink-0 pl-3 text-[14px] font-semibold ${
                     s.more_volatile ? "text-red" : "text-teal"
                   }`}
                 >
