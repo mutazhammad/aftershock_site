@@ -720,7 +720,7 @@ function EventReport() {
             <span className="text-text-primary">
               beyond the overall market (S&amp;P 500)
             </span>{" "}
-           , what event studies call the{" "}
+            , what event studies call the{" "}
             <InfoTooltip
               term="cumulative abnormal return"
               definition="The stock or sector's return minus the market's return, added up across the window. It isolates the piece of the move that isn't explained by the broad market."
@@ -741,7 +741,11 @@ function EventReport() {
 
       {(showChart || showReactionBars) && (
         <section className="mt-14 sm:mt-16">
-          <SectionTitle n="05" title="Market Reaction" sub="vs S&P 500" />
+          <SectionTitle
+            n="05"
+            title="How Much Sectors Moved"
+            sub="Move beyond the overall market"
+          />
 
           {showChart && e.timeseries && (
             <div className="mb-4">
