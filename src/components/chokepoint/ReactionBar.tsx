@@ -27,20 +27,35 @@ export function ReactionBar({ row }: { row: ReactionRow }) {
 
   return (
     <div
-      className={`grid grid-cols-12 items-center gap-3 border-b border-hairline/70 px-3 py-3 ${
-        sig ? "" : "opacity-70"
+      className={`grid grid-cols-12 items-center gap-x-3 gap-y-2 border-b border-hairline/70 px-1 py-3 sm:px-3 ${
+        sig ? "" : "opacity-60"
       }`}
     >
-      {/* Sector + tickers */}
-      <div className="col-span-12 md:col-span-4">
-        <div className={`text-[13px] ${sig ? "font-semibold text-text-primary" : "text-text-secondary"}`}>
+      {/* Sector name, and on mobile the percentage beside it */}
+      <div className="col-span-12 flex items-baseline justify-between gap-3 md:col-span-4 md:block">
+        <div
+          className={`text-[14px] ${
+            sig ? "font-semibold text-text-primary" : "text-[13px] text-text-secondary"
+          }`}
+        >
           {row.sector}
         </div>
-        <div className="mono text-[10.5px] text-text-muted">{row.tickers}</div>
+        <span
+          className={`mono shrink-0 text-[14px] md:hidden ${
+            isGain ? (sig ? "text-teal" : "text-teal/70") : sig ? "text-red" : "text-red/70"
+          } ${sig ? "font-semibold" : ""}`}
+        >
+          {row.pct}
+        </span>
+        <div className="mono hidden text-[11px] text-text-muted md:block">{row.tickers}</div>
+      </div>
+      {/* Tickers on their own line on mobile */}
+      <div className="col-span-12 mono text-[11px] text-text-muted md:hidden">
+        {row.tickers}
       </div>
 
       {/* Bar */}
-      <div className="col-span-8 md:col-span-5">
+      <div className="col-span-12 md:col-span-5">
         <div className="relative h-3 w-full border border-steel/60 bg-abyss">
           {/* center line */}
           <div className="absolute left-1/2 top-[-3px] h-[18px] w-px bg-signal/40" />
@@ -72,9 +87,9 @@ export function ReactionBar({ row }: { row: ReactionRow }) {
       </div>
 
       {/* Pct + tag */}
-      <div className="col-span-4 md:col-span-3 flex items-center justify-end gap-2">
+      <div className="col-span-12 flex items-center justify-start gap-2 md:col-span-3 md:justify-end">
         <span
-          className={`mono text-[13px] ${
+          className={`mono hidden text-[13px] md:inline ${
             isGain ? (sig ? "text-teal" : "text-teal/70") : sig ? "text-red" : "text-red/70"
           } ${sig ? "font-semibold" : ""}`}
         >
