@@ -377,7 +377,7 @@ function EventReport() {
       {e.summary && (
         <section className="mt-14 sm:mt-16">
           <SectionTitle n="01" title="What Happened" />
-          <p className="max-w-3xl text-[14.5px] leading-[1.75] text-text-primary whitespace-pre-line">
+          <p className="measure text-[14.5px] leading-[1.75] text-text-primary whitespace-pre-line">
             {e.summary}
           </p>
         </section>
@@ -417,7 +417,7 @@ function EventReport() {
             title="How This Reaches Markets"
             sub="the causal chain"
           />
-          <div className="max-w-3xl border-l-2 border-signal bg-signal/5 p-5">
+          <div className="measure border-l-2 border-signal bg-signal/5 p-5">
             <p className="text-[14.5px] leading-[1.75] text-text-primary whitespace-pre-line">
               {e.transmission_mechanism}
             </p>
@@ -526,7 +526,7 @@ function EventReport() {
                 <Caption>Average move across all validated precedents.</Caption>
               </div>
 
-              <p className="max-w-3xl text-[14.5px] leading-relaxed text-text-secondary">
+              <p className="measure text-[14.5px] leading-relaxed text-text-secondary">
                 {precedentSpreadProse(pe)}
               </p>
 
@@ -677,7 +677,7 @@ function EventReport() {
             <h2 className="display text-[20px] tracking-wide text-ash">
               No Validated Precedents
             </h2>
-            <p className="mt-3 max-w-3xl text-[14.5px] leading-relaxed text-ash">
+            <p className="mt-3 measure text-[14.5px] leading-relaxed text-ash">
               The system researched historical parallels for this event and measured each
               one against market data. None survived validation. A precedent is only used
               when its own measurement holds up, so this report carries no historical
@@ -780,7 +780,7 @@ function EventReport() {
           )}
 
           {showReactionBars && (
-            <p className="mt-3 max-w-3xl text-[14.5px] leading-relaxed text-text-secondary">
+            <p className="mt-3 measure text-[14.5px] leading-relaxed text-text-secondary">
               {reactionProse(e.reaction, e.event.type_label)}
             </p>
           )}
@@ -807,13 +807,13 @@ function EventReport() {
             href="/methodology"
             hash="volatility"
           />
-          <p className="mb-3 max-w-3xl text-[13px] text-text-secondary">
+          <p className="mb-3 measure text-[13px] text-text-secondary">
             Volatility measures how erratic prices became, a separate signal from the
             direction of the move.
           </p>
           <VolatilityBlock v={e.volatility} />
           {(e.volatility.vix || e.volatility.sectors?.length) && (
-            <div className="mt-3 max-w-3xl space-y-2 text-[14.5px] leading-relaxed text-text-secondary">
+            <div className="mt-3 measure space-y-2 text-[14.5px] leading-relaxed text-text-secondary">
               {e.volatility.vix && <p>{vixProse(e.volatility.vix)}</p>}
               {e.volatility.sectors && e.volatility.sectors.length > 0 && (
                 <p>{volSectorsProse(e.volatility.sectors)}</p>
@@ -867,7 +867,7 @@ function EventReport() {
               </tbody>
             </table>
           </div>
-          <p className="mt-3 max-w-3xl text-[14.5px] leading-relaxed text-text-secondary">
+          <p className="mt-3 measure text-[14.5px] leading-relaxed text-text-secondary">
             {phasesProse(e.phases)}
           </p>
         </section>

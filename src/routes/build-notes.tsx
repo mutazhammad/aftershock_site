@@ -42,7 +42,7 @@ function Section({
         </span>
         <h2 className="display text-[20px] tracking-wide text-bone">{title}</h2>
       </div>
-      <div className="max-w-3xl space-y-3 text-[14.5px] leading-relaxed text-text-primary">
+      <div className="measure space-y-3 text-[14.5px] leading-relaxed text-text-primary">
         {children}
       </div>
     </section>
@@ -59,7 +59,7 @@ function BuildNotesPage() {
         <h1 className="display mt-2 text-[32px] tracking-tight text-bone">
           What's Under The Hood
         </h1>
-        <p className="mt-3 max-w-3xl text-[14px] leading-relaxed text-text-secondary">
+        <p className="mt-3 measure text-[14px] leading-relaxed text-text-secondary">
           A written record of how Aftershock is built, and why it was built this
           way. Every decision below shaped a specific failure mode we hit and
           fixed.
