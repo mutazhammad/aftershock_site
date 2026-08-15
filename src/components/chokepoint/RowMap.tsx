@@ -19,6 +19,15 @@ export function RowMap({
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const [Mod, setMod] = useState<any>(null);
+  const [narrow, setNarrow] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const on = () => setNarrow(mq.matches);
+    on();
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
 
   useEffect(() => {
     if (!ref.current) return;
@@ -56,7 +65,7 @@ export function RowMap({
     >
       <div
         className="absolute inset-0 transition-opacity duration-300"
-        style={{ opacity: hovered ? 0.12 : 0.07 }}
+        style={{ opacity: narrow ? 0.04 : hovered ? 0.12 : 0.07 }}
       >
         {Mod &&
           (() => {
