@@ -153,26 +153,29 @@ function FeedPage() {
       </div>
 
       {/* Command bar */}
-      <div className="mb-4 border border-steel bg-hull/60 p-3 mono">
-        <div className="flex flex-wrap items-center gap-3">
+      <div className="mb-2 border border-steel bg-hull/60 p-2 mono sm:p-3">
+        <div className="flex items-center gap-3">
           <span className="text-signal text-[13px]">&gt;</span>
           <input
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="search events"
-            className="min-w-0 flex-1 bg-transparent text-[13px] text-bone placeholder:text-ash focus:outline-none"
+            aria-label="Search events"
+            className="min-h-[44px] min-w-0 flex-1 bg-transparent text-[14px] text-bone placeholder:text-ash focus:outline-none"
           />
           <div ref={menuRef} className="relative">
             <button
               type="button"
               onClick={() => setTimeOpen((o) => !o)}
-              className="border border-steel px-3 py-1.5 text-[10.5px] uppercase tracking-[0.16em] text-text-secondary hover:border-signal/60 hover:text-ice"
+              aria-label="Time filter"
+              className="flex min-h-[44px] items-center border border-steel px-3 text-[11px] uppercase tracking-[0.16em] text-text-secondary hover:border-signal/60 hover:text-ice"
             >
-              {activeLabel} ▾
+              <span className="hidden sm:inline">{activeLabel} ▾</span>
+              <span className="sm:hidden">Filter ▾</span>
             </button>
             {timeOpen && (
-              <div className="absolute right-0 top-full z-20 mt-1 w-72 border border-steel bg-hull p-2 shadow-2xl">
+              <div className="absolute right-0 top-full z-20 mt-1 w-[min(18rem,calc(100vw-2rem))] border border-steel bg-hull p-2 shadow-2xl">
                 {PERIODS.map((p) => (
                   <button
                     key={p.id}
@@ -182,7 +185,7 @@ function FeedPage() {
                       setTo("");
                       setTimeOpen(false);
                     }}
-                    className={`block w-full px-2 py-1.5 text-left text-[11px] uppercase tracking-[0.14em] transition-colors ${
+                    className={`block w-full px-2 py-3 text-left text-[12px] uppercase tracking-[0.14em] transition-colors ${
                       period === p.id
                         ? "text-signal bg-signal/10"
                         : "text-text-secondary hover:text-ice hover:bg-steel/40"
@@ -220,10 +223,10 @@ function FeedPage() {
               </div>
             )}
           </div>
-          <span className="text-[10.5px] uppercase tracking-[0.18em] text-signal">
-            Showing {filtered.length} of {initial.length} Events
-          </span>
         </div>
+      </div>
+      <div className="mono mb-4 text-[11px] uppercase tracking-[0.18em] text-signal">
+        Showing {filtered.length} of {initial.length} Events
       </div>
 
       {filtered.length === 0 ? (
