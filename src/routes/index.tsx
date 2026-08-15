@@ -142,7 +142,7 @@ function LandingPage() {
 
       {/* WHAT IT DOES */}
       <section className="relative z-10 border-t border-steel/60 bg-abyss">
-        <div className="mx-auto max-w-6xl px-5 py-24">
+        <div className="mx-auto max-w-6xl px-5 py-16 md:py-28">
           <Eyebrow n="01" label="What It Does" />
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             <Capability
@@ -172,7 +172,7 @@ function LandingPage() {
 
       {/* SIGNAL CHAIN */}
       <section className="relative z-10 border-t border-steel/60 bg-hull/40">
-        <div className="mx-auto max-w-6xl px-5 py-24">
+        <div className="mx-auto max-w-6xl px-5 py-16 md:py-28">
           <Eyebrow n="02" label="The Signal Chain" />
           <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-4">
             {[
@@ -202,7 +202,7 @@ function LandingPage() {
       {/* LIVE PROOF */}
       {proofEvents.length > 0 && (
         <section className="relative z-10 border-t border-steel/60 bg-abyss">
-          <div className="mx-auto max-w-6xl px-5 py-24">
+          <div className="mx-auto max-w-6xl px-5 py-16 md:py-28">
             <div className="flex items-end justify-between gap-4">
               <Eyebrow n="03" label="Live From The Feed" />
               <Link
@@ -242,7 +242,7 @@ function LandingPage() {
 
       {/* CLOSING CLAIM */}
       <section className="relative z-10 border-t border-steel/60 bg-hull/40">
-        <div className="mx-auto max-w-4xl px-5 py-24">
+        <div className="mx-auto max-w-4xl px-5 py-16 md:py-28">
           <div className="border-l-2 border-signal bg-abyss/60 p-8">
             <div className="mono text-[10.5px] uppercase tracking-[0.24em] text-signal">
               The Standard
