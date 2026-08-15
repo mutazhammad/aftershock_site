@@ -305,11 +305,12 @@ function TopNav() {
         <Link to="/" aria-label="Aftershock, home">
           <WordmarkCompact />
         </Link>
-        <nav className="mono flex items-center gap-4 text-[11px] uppercase tracking-[0.22em] text-bone/70">
+        <nav className="mono hidden items-center gap-4 text-[11px] uppercase tracking-[0.22em] text-bone/70 md:flex">
           <Link to="/events" className="hover:text-ice">Events</Link>
           <Link to="/methodology" className="hover:text-ice">Methodology</Link>
           <Link to="/build-notes" className="hover:text-ice">Build Notes</Link>
         </nav>
+        <MobileNav />
       </div>
     </header>
   );
