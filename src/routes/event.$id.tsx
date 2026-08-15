@@ -198,9 +198,12 @@ function SectionTitle({
   hash?: string;
 }) {
   return (
-    <div className="mb-3 flex items-baseline gap-3 border-b border-hairline pb-2">
-      <span className="mono text-[10px] uppercase tracking-[0.18em] text-text-muted">{n}</span>
-      <h2 className="text-[15px] font-semibold tracking-tight text-text-primary">
+    <div className="mb-4">
+      <div className="mono text-[10.5px] uppercase tracking-[0.2em] text-ash">
+        {n}
+        {sub ? ` · ${sub}` : ""}
+      </div>
+      <h2 className="display mt-1 text-[21px] leading-tight tracking-wide text-bone sm:text-[24px]">
         {href ? (
           <Link
             to={href as any}
@@ -213,7 +216,6 @@ function SectionTitle({
           title
         )}
       </h2>
-      {sub && <span className="mono text-[10.5px] text-text-muted">{sub}</span>}
     </div>
   );
 }
