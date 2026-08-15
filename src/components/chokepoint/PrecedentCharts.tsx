@@ -1,4 +1,6 @@
 import type { PrecedentExpectation } from "@/lib/chokepoint-types";
+import { useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 function parsePct(v: any): number {
   if (typeof v === "number") return v;
@@ -13,30 +15,35 @@ function parsePct(v: any): number {
 // A. Diverging bar chart of sector averages
 // ─────────────────────────────────────────────────────────────
 export function PrecedentDivergingBars({ pe }: { pe: PrecedentExpectation }) {
+  const isMobile = useIsMobile();
+  const [showAll, setShowAll] = useState(false);
   const rows = (pe.sector_averages ?? []).map((r) => ({
     ...r,
     v: typeof r.avg_value === "number" ? r.avg_value : parsePct(r.avg_move),
   }));
   if (!rows.length) return null;
   const max = Math.max(6, ...rows.map((r) => Math.abs(r.v)));
+  const ranked = [...rows].sort((a, b) => Math.abs(b.v) - Math.abs(a.v));
+  const collapsed = isMobile && !showAll && ranked.length > 5;
+  const shown = collapsed ? ranked.slice(0, 5) : rows;
   return (
-    <div className="border border-hairline bg-panel">
+    <div className="bg-panel/50">
       <div className="grid grid-cols-12 gap-3 border-b border-hairline px-3 py-2">
-        <div className="col-span-4 mono text-[9.5px] uppercase tracking-[0.16em] text-text-muted">
+        <div className="col-span-4 mono text-[10px] uppercase tracking-[0.16em] text-text-muted">
           Sector
         </div>
-        <div className="col-span-6 mono text-[9.5px] uppercase tracking-[0.16em] text-text-muted">
+        <div className="col-span-6 mono hidden text-[10px] uppercase tracking-[0.16em] text-text-muted sm:block">
           <div className="flex justify-between">
             <span>← loss</span>
             <span>0</span>
             <span>gain →</span>
           </div>
         </div>
-        <div className="col-span-2 mono text-right text-[9.5px] uppercase tracking-[0.16em] text-text-muted">
+        <div className="col-span-8 mono text-right text-[10px] uppercase tracking-[0.16em] text-text-muted sm:col-span-2">
           Avg Move
         </div>
       </div>
-      {rows.map((r) => {
+      {shown.map((r) => {
         const pos = r.v >= 0;
         const width = (Math.abs(r.v) / max) * 50;
         const sig = (r.n_significant ?? 0) > 0;
@@ -44,19 +51,19 @@ export function PrecedentDivergingBars({ pe }: { pe: PrecedentExpectation }) {
         return (
           <div
             key={r.sector}
-            className={`grid grid-cols-12 items-center gap-3 border-b border-hairline/70 px-3 py-2.5 last:border-b-0 ${
-              sig ? "" : "py-1.5 opacity-55"
+            className={`grid grid-cols-12 items-center gap-x-3 gap-y-2 border-b border-hairline/50 px-3 py-3 last:border-b-0 ${
+              sig ? "" : "opacity-55"
             }`}
           >
             <div
-              className={`col-span-4 ${
-                sig ? "text-[12.5px] text-text-primary" : "text-[11px] text-ash"
+              className={`col-span-12 sm:col-span-4 ${
+                sig ? "text-[14px] text-text-primary" : "text-[13px] text-ash"
               }`}
             >
               {r.sector}
             </div>
             <div
-              className={`col-span-6 relative border border-steel/60 bg-abyss ${
+              className={`col-span-12 sm:col-span-6 relative border border-steel/60 bg-abyss ${
                 sig ? "h-3" : "h-2"
               }`}
             >
@@ -82,13 +89,13 @@ export function PrecedentDivergingBars({ pe }: { pe: PrecedentExpectation }) {
               />
             </div>
             <div
-              className={`col-span-2 mono text-right text-[12px] ${
-                sig ? (pos ? "text-verdigris" : "text-ember") : "text-[10.5px] text-ash"
+              className={`col-span-12 mono text-left text-[13px] sm:col-span-2 sm:text-right ${
+                sig ? (pos ? "text-verdigris" : "text-ember") : "text-[12px] text-ash"
               }`}
             >
               <div>Average: {r.avg_move}</div>
               {sigOnly != null && sigOnly !== "" && (
-                <div className="text-[10.5px] text-signal">
+                <div className="text-[12px] text-signal">
                   Among significant results: {sigOnly}
                 </div>
               )}
@@ -96,6 +103,15 @@ export function PrecedentDivergingBars({ pe }: { pe: PrecedentExpectation }) {
           </div>
         );
       })}
+      {isMobile && ranked.length > 5 && (
+        <button
+          type="button"
+          onClick={() => setShowAll((s) => !s)}
+          className="mono flex min-h-[44px] w-full items-center justify-center border-t border-hairline text-[11px] uppercase tracking-[0.16em] text-signal"
+        >
+          {showAll ? "Show Top Five Sectors" : "Show All Sectors"}
+        </button>
+      )}
     </div>
   );
 }
