@@ -39,7 +39,7 @@ function Section({
         <span className="mono text-[10px] uppercase tracking-[0.18em] text-text-muted">{n}</span>
         <h2 className="text-[16px] font-semibold tracking-tight">{title}</h2>
       </div>
-      <div className="max-w-3xl space-y-3 text-[14px] leading-relaxed text-text-secondary">
+      <div className="measure space-y-3 text-[14px] leading-relaxed text-text-secondary">
         {children}
       </div>
     </section>
@@ -52,7 +52,7 @@ function MethodologyPage() {
       <div className="border border-hairline bg-panel p-6">
         <div className="mono text-[10.5px] uppercase tracking-[0.18em] text-amber">Methodology</div>
         <h1 className="mt-2 text-[28px] font-semibold tracking-tight">How Aftershock Measures Market Reactions</h1>
-        <p className="mt-3 max-w-3xl text-[14px] leading-relaxed text-text-secondary">
+        <p className="mt-3 measure text-[14px] leading-relaxed text-text-secondary">
           Aftershock is built around one idea: geopolitical shocks leave a measurable fingerprint on
           markets, and honesty about what we do and don't know is more useful than a confident guess.
         </p>

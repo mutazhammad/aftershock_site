@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { WordmarkCompact, WordmarkFull } from "./Brand";
+import { MobileNav } from "./MobileNav";
 
 export function Chrome({ children }: { children: ReactNode }) {
   return (
@@ -11,19 +12,22 @@ export function Chrome({ children }: { children: ReactNode }) {
       <div className="texture-vignette" aria-hidden />
 
       <header className="relative z-10 border-b border-hairline/80 bg-abyss/70 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
           <Link to="/" className="min-w-0" aria-label="Aftershock, home">
             <WordmarkCompact />
           </Link>
-          <nav className="flex items-center gap-1 mono text-[11px] uppercase tracking-[0.18em]">
+          <nav className="hidden items-center gap-1 mono text-[11px] uppercase tracking-[0.18em] md:flex">
             <NavLink to="/">Home</NavLink>
             <NavLink to="/events">Events</NavLink>
             <NavLink to="/methodology">Methodology</NavLink>
             <NavLink to="/build-notes">Build Notes</NavLink>
           </nav>
+          <MobileNav />
         </div>
       </header>
-      <main className="relative z-10 mx-auto w-full max-w-6xl flex-1 px-5 py-8">{children}</main>
+      <main className="relative z-10 mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-5 sm:py-8">
+        {children}
+      </main>
       <footer className="relative z-10 mt-16 border-t border-hairline bg-abyss/60">
         <div className="mx-auto max-w-6xl px-5 py-8 flex flex-wrap items-end justify-between gap-6">
           <WordmarkFull />

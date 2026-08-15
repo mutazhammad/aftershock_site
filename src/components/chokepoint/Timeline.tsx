@@ -10,7 +10,7 @@ export function Timeline({ entries }: { entries: TimelineEntry[] }) {
             {e.datetime}
           </div>
           <div className="mt-1 text-[14px] font-semibold text-text-primary">{e.headline}</div>
-          <p className="mt-1 text-[13px] leading-relaxed text-text-secondary">{e.detail}</p>
+          <p className="mt-1 text-[14.5px] leading-relaxed text-text-secondary">{e.detail}</p>
           <div className="mono mt-1 text-[10.5px] text-text-muted">source: {e.source}</div>
         </li>
       ))}

@@ -298,3 +298,24 @@
     animation: none !important;
   }
 }
+
+/* ============================================================
+   Clarity pass helpers
+   ============================================================ */
+
+/* Comfortable reading measure, roughly 70 characters */
+@utility measure {
+  max-width: 68ch;
+}
+
+/* Minimum comfortable tap target */
+@utility tap {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Drop the radar sweep on small screens */
+@media (max-width: 767px) {
+  .animate-radar { display: none !important; }
+}

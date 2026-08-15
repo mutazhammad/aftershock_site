@@ -29,7 +29,7 @@ export function CompanyCards({ items }: { items: CompanyAffected[] }) {
               )}
             </div>
             {c.role && (
-              <p className="mt-2 text-[12.5px] leading-relaxed text-text-secondary">{c.role}</p>
+              <p className="mt-2 text-[14px] leading-relaxed text-text-secondary">{c.role}</p>
             )}
           </div>
         );

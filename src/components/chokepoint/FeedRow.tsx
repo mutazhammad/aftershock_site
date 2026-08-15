@@ -201,15 +201,18 @@ export function FeedRow({ item, index }: { item: FeedItem; index: number }) {
       <Link
         to="/event/$id"
         params={{ id: item.id }}
-        className="group relative block px-2 py-6 transition-colors hover:bg-hull/60"
+        className="group relative block px-2 py-5 transition-colors hover:bg-hull/60 sm:py-6"
       >
         <RowMap center={center} zoom={zoom} hovered={hovered} />
-        <div className="relative flex items-start gap-4">
-          <div className="pt-2">
+        <div className="relative flex items-start gap-3 sm:gap-4">
+          <div className="hidden pt-2 sm:block">
             <StateGlyph recency={item.recency} />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="mono text-[10.5px] uppercase tracking-[0.18em] text-ash">
+            <div className="mono flex flex-wrap items-center gap-x-1 text-[11px] uppercase tracking-[0.16em] text-ash sm:tracking-[0.18em]">
+              <span className="sm:hidden">
+                <StateGlyph recency={item.recency} />
+              </span>
               <span
                 className={
                   item.recency === "breaking"
@@ -225,10 +228,10 @@ export function FeedRow({ item, index }: { item: FeedItem; index: number }) {
               {typeLabel ? ` · ${typeLabel}` : ""}
               {region ? ` · ${String(region).toUpperCase()}` : ""}
             </div>
-            <h2 className="display mt-2 text-[clamp(1.35rem,2.6vw,1.9rem)] leading-tight text-bone group-hover:text-ice">
+            <h2 className="display mt-2 text-[1.3rem] leading-tight text-bone group-hover:text-ice sm:text-[clamp(1.35rem,2.6vw,1.9rem)]">
               {item.name}
             </h2>
-            <div className="mono mt-2 flex flex-wrap items-center gap-x-1 text-[12px]">
+            <div className="mono mt-2 flex flex-wrap items-center gap-x-1 gap-y-1 text-[12px] leading-relaxed">
               {item.recency === "breaking" && <BreakingPreview data={d} />}
               {item.recency === "developing" && <DevelopingPreview data={d} />}
               {item.recency === "settled" && <SettledPreview data={d} />}

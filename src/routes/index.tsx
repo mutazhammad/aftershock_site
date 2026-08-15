@@ -2,6 +2,7 @@ import { WordmarkCompact, WordmarkFull } from "@/components/chokepoint/Brand";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Chrome } from "@/components/chokepoint/Chrome";
+import { MobileNav } from "@/components/chokepoint/MobileNav";
 import { HeroMap } from "@/components/chokepoint/HeroMap";
 import { RecencyBadge, StatusBadge, TypeChip } from "@/components/chokepoint/Badges";
 import {
@@ -69,7 +70,7 @@ function LandingPage() {
       <TopNav />
 
       {/* HERO */}
-      <section className="relative flex min-h-[100vh] items-center justify-center overflow-hidden pt-20">
+      <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden pt-20">
         <HeroMap markers={locs} />
 
         {/* Radial signal glow behind the headline */}
@@ -77,13 +78,13 @@ function LandingPage() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse at 50% 45%, rgba(63,169,245,0.22), rgba(63,169,245,0.05) 30%, transparent 60%)",
+              "radial-gradient(ellipse at 50% 45%, rgba(63,169,245,0.10), rgba(63,169,245,0.03) 30%, transparent 60%)",
           }}
           aria-hidden
         />
 
         <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center px-5 text-center animate-fade-rise">
-          <div className="mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.28em] text-signal">
+          <div className="mono flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[11px] uppercase tracking-[0.2em] text-signal sm:tracking-[0.28em]">
             <span className="relative flex h-2 w-2">
               <span className="absolute inset-0 rounded-full bg-signal opacity-70 animate-ambient" />
               <span className="relative h-2 w-2 rounded-full bg-signal" />
@@ -102,38 +103,39 @@ function LandingPage() {
           </div>
 
           <h1
-            className="display mt-6 text-[clamp(3.5rem,11vw,10rem)] leading-[0.88] tracking-[-0.02em] text-bone"
-            style={{ textShadow: "0 0 60px rgba(63,169,245,0.25)" }}
+            className="display mt-6 text-[clamp(2.1rem,8.6vw,7.5rem)] leading-[1.02] tracking-[-0.005em] text-bone sm:leading-[0.92]"
+            style={{ textShadow: "0 0 45px rgba(63,169,245,0.14)" }}
           >
-            Panic Is Not
+            Conflict Has A Price
             <br />
-            A Strategy
+            This Measures It
           </h1>
 
           <div className="animate-draw-rule mt-8 h-px w-56 bg-signal/70" />
 
-          <p className="mt-8 max-w-2xl text-[15px] leading-relaxed text-bone/85 md:text-[17px]">
-            A blockade closes. Sanctions land. Missiles fly. Aftershock tells you which
-            sectors move, by how much, and what history says happens next.
+          <p className="measure mt-8 text-[15px] leading-relaxed text-bone/85 md:text-[17px]">
+            When a strait closes or sanctions land, Aftershock measures which sectors moved
+            in comparable past events, by how much, and whether the move was statistically
+            real.
           </p>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-10 flex w-full max-w-sm flex-col items-stretch gap-3 sm:w-auto sm:max-w-none sm:flex-row sm:items-center sm:justify-center">
             <Link
               to="/events"
-              className="mono inline-flex items-center gap-2 border border-signal bg-signal/15 px-5 py-3 text-[12px] uppercase tracking-[0.2em] text-signal transition-colors hover:bg-signal/25 hover:text-ice"
+              className="mono inline-flex min-h-[48px] items-center justify-center gap-2 border border-signal bg-signal/15 px-5 py-3 text-[12px] uppercase tracking-[0.2em] text-signal transition-colors hover:bg-signal/25 hover:text-ice"
               style={{ boxShadow: "0 0 40px rgba(63,169,245,0.15)" }}
             >
               View The Events →
             </Link>
             <Link
               to="/methodology"
-              className="mono inline-flex items-center gap-2 border border-steel px-5 py-3 text-[12px] uppercase tracking-[0.2em] text-bone/80 transition-colors hover:border-signal/60 hover:text-ice"
+              className="mono inline-flex min-h-[48px] items-center justify-center gap-2 border border-steel px-5 py-3 text-[12px] uppercase tracking-[0.2em] text-bone/80 transition-colors hover:border-signal/60 hover:text-ice"
             >
               Methodology
             </Link>
           </div>
 
-          <div className="mono mt-14 text-[10px] uppercase tracking-[0.28em] text-ash/70">
+          <div className="mono mt-12 text-[10px] uppercase tracking-[0.28em] text-ash/70">
             ↓ Scroll
           </div>
         </div>
@@ -141,7 +143,7 @@ function LandingPage() {
 
       {/* WHAT IT DOES */}
       <section className="relative z-10 border-t border-steel/60 bg-abyss">
-        <div className="mx-auto max-w-6xl px-5 py-24">
+        <div className="mx-auto max-w-6xl px-5 py-16 md:py-28">
           <Eyebrow n="01" label="What It Does" />
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             <Capability
@@ -171,7 +173,7 @@ function LandingPage() {
 
       {/* SIGNAL CHAIN */}
       <section className="relative z-10 border-t border-steel/60 bg-hull/40">
-        <div className="mx-auto max-w-6xl px-5 py-24">
+        <div className="mx-auto max-w-6xl px-5 py-16 md:py-28">
           <Eyebrow n="02" label="The Signal Chain" />
           <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-4">
             {[
@@ -201,7 +203,7 @@ function LandingPage() {
       {/* LIVE PROOF */}
       {proofEvents.length > 0 && (
         <section className="relative z-10 border-t border-steel/60 bg-abyss">
-          <div className="mx-auto max-w-6xl px-5 py-24">
+          <div className="mx-auto max-w-6xl px-5 py-16 md:py-28">
             <div className="flex items-end justify-between gap-4">
               <Eyebrow n="03" label="Live From The Feed" />
               <Link
@@ -241,7 +243,7 @@ function LandingPage() {
 
       {/* CLOSING CLAIM */}
       <section className="relative z-10 border-t border-steel/60 bg-hull/40">
-        <div className="mx-auto max-w-4xl px-5 py-24">
+        <div className="mx-auto max-w-4xl px-5 py-16 md:py-28">
           <div className="border-l-2 border-signal bg-abyss/60 p-8">
             <div className="mono text-[10.5px] uppercase tracking-[0.24em] text-signal">
               The Standard
@@ -304,11 +306,12 @@ function TopNav() {
         <Link to="/" aria-label="Aftershock, home">
           <WordmarkCompact />
         </Link>
-        <nav className="mono flex items-center gap-4 text-[11px] uppercase tracking-[0.22em] text-bone/70">
+        <nav className="mono hidden items-center gap-4 text-[11px] uppercase tracking-[0.22em] text-bone/70 md:flex">
           <Link to="/events" className="hover:text-ice">Events</Link>
           <Link to="/methodology" className="hover:text-ice">Methodology</Link>
           <Link to="/build-notes" className="hover:text-ice">Build Notes</Link>
         </nav>
+        <MobileNav />
       </div>
     </header>
   );
