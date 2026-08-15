@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { EventLocation } from "@/lib/aftershock-api";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const TOPO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
@@ -16,6 +17,8 @@ export function HeroMap({ markers }: { markers: EventLocation[] }) {
   const [Mod, setMod] = useState<any>(null);
   const [reduced, setReduced] = useState(false);
   const [phase, setPhase] = useState<0 | 1 | 2 | 3>(0); // 0 blank, 1 graticule, 2 land, 3 markers
+  const isMobile = useIsMobile();
+  const shown = isMobile ? markers.slice(0, 6) : markers;
 
   useEffect(() => {
     const m = window.matchMedia?.("(prefers-reduced-motion: reduce)");
@@ -53,7 +56,7 @@ export function HeroMap({ markers }: { markers: EventLocation[] }) {
       <div className="absolute inset-0 bg-abyss" />
 
       {/* Radar sweep: single revolution, then gone */}
-      {!reduced && phase >= 2 && (
+      {!reduced && !isMobile && phase >= 2 && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div
             className="animate-radar h-[160vmax] w-[160vmax] rounded-full"
@@ -108,7 +111,7 @@ export function HeroMap({ markers }: { markers: EventLocation[] }) {
 
           {/* Event markers ignite one by one */}
           {phase >= 3 &&
-            markers.map((m, i) => (
+            shown.map((m, i) => (
               <Marker key={m.id} coordinates={m.coords}>
                 <g
                   className={reduced ? "" : "animate-ignite"}
