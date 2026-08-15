@@ -1,228 +1,86 @@
-# Aftershock
+# Aftershock, frontend
 
-Build a web app called "Chokepoint" — a decision-support tool for investors
+The web interface for Aftershock, a system that measures how geopolitical events move financial markets.
 
-that shows how geopolitical events have historically affected financial
+**Live site:** https://aftershock-site-five.vercel.app/
+**Backend and engine:** https://github.com/mutazhammad/aftershock-engine
 
-markets. It presents measured data and analysis. It NEVER gives buy/sell
+This repository contains the React frontend only. The event-study engine, detection pipeline, precedent research, and diagnostics all live in the backend repository above.
 
-advice or recommendations anywhere.
+## What this renders
 
-═══ TWO SCREENS ═══
+The frontend is a read layer. It queries Supabase directly and renders whatever the backend has published. There is no server between the two.
 
-SCREEN 1 — Event feed (home page)
+**Event feed.** A watch list of detected events, newest first, with search and a time filter. Each row previews its own analysis, so the row itself tells you something before you click. Breaking events preview their historical precedent averages. Settled events preview their measured result with an inline sparkline of the reaction path.
 
-A scrollable list of geopolitical event cards, newest first. Each card shows:
+**Event report.** The full analysis for a single event:
 
-event title, date, a type chip (e.g. "energy supply shock"), a status badge
+- A plain-language summary of the result and the tickers involved
+- What happened, and the causal chain by which it reaches market prices
+- Measurement diagnostics, covering date basis, single-constituent concentration, and confounding windows
+- Historical precedents, each independently measured and validated
+- Sector reactions, with statistically insignificant results visually muted
+- Market fear (VIX) and realized volatility
+- What has materially changed between the precedent conditions and today
 
-(confirmed = teal, disputed = amber), and a recency badge (breaking /
+**Methodology.** Plain-language explanations of event studies, the information date, statistical significance, causal versus descriptive readings, and the event lifecycle.
 
-developing / settled). A filter bar at the top (by event family) and a
+**Build notes.** The engineering decisions behind the system and why they were made.
 
-Refresh button. Clicking a card opens Screen 2 for that event.
+## The lifecycle the interface reflects
 
-SCREEN 2 — Event analysis report (the core screen)
+Events change shape as market data accumulates, and the interface changes with them:
 
-A professional report for ONE event, these sections top to bottom:
+- **Breaking:** no measured reaction exists yet, so the report leads with validated historical precedents
+- **Developing:** the snap window is measurable, results shown as provisional
+- **Settled:** the full window has closed, complete measurement with charts
 
-1. Header: event title; dates shown as "Measured from [information_date]
+A row in the feed visibly gets denser as the event matures.
 
-   (event start), not the [announcement_date] announcement"; type chip;
+## Design
 
-   status badge; two key metrics (e.g. Brent oil, S&P 500). Below: a
+Dark intelligence-terminal theme, blue-black rather than neutral.
 
-   "Reported by [sources] — multiple sources agree / sources disagree" line.
+| Token | Hex | Use |
+|---|---|---|
+| abyss | `#050A18` | Canvas |
+| hull | `#0C1628` | Panels |
+| steel | `#1B2C47` | Borders, map landmass |
+| signal | `#3FA9F5` | Accent, live data |
+| ember | `#FF6B4A` | Losses |
+| verdigris | `#2DD4A7` | Gains |
+| ash | `#6C7A94` | Secondary text |
+| bone | `#E8EDF5` | Primary text |
 
-2. Summary: 3–4 plain-English sentences.
+A condensed technical sans for display, Inter for body, JetBrains Mono for every number. Textured regional maps sit behind report headers and feed rows, cropped to each event's actual location.
 
-3. How to read this: short explainer stating each sector is a basket of
+One rule carries throughout: statistically significant results render solid and lit, insignificant results render flat and muted. Colour and light mean evidence, so a reader's eye is drawn to real findings rather than noise.
 
-   named stocks, and the % is the move BEYOND the overall market (S&P 500).
+## Stack
 
-4. Market reaction (first week): one row per sector — sector name, the
-
-   stocks it tracks (small monospace), a horizontal bar growing from a
-
-   center zero line (teal right = gain, red left = loss), the % move, and a
-
-   significance tag.
-
-   ► CRITICAL RULE: if significant → solid/full-color bar, bolder row.
-
-     If NOT significant → muted/translucent bar + small grey
-
-     "not significant" tag. This visual difference is essential.
-
-   Then a highlighted callout for the lasting/significant finding.
-
-5. Historical context: a small table — columns Sector / Usual pattern /
-
-   This event (✓ when it matches the usual pattern).
-
-6. Companies involved: two columns — "Companies most affected" (ticker
-
-   chips, green ▲ / red ▼) and "Companies named in the conflict"
-
-   (contractor name + contract $ value).
-
-7. Confidence footer + disclaimer: "This tool informs your decision.
-
-   It does not give investment advice."
-
-═══ DATA MODEL ═══
-
-Render everything from a JSON record per event. Build typed components and
-
-load from a local mock-data file for now (real data wired in later). Shape:
-
-{
-
-  "event": { "name", "information_date", "announcement_date",
-
-             "type_label", "key_metrics": [{"label","value","tone"}] },
-
-  "sources": ["..."], "status": "confirmed|disputed",
-
-  "recency": "breaking|developing|settled",
-
-  "summary": "...",
-
-  "reaction": [
-
-    { "sector", "tickers", "pct", "significant": true|false,
-
-      "tone": "gain|loss" }
-
-  ],
-
-  "lasting_finding": "...",
-
-  "historical": [ { "sector", "usual", "this_event", "match": true|false } ],
-
-  "companies_affected": [ {"ticker","tone"} ],
-
-  "companies_named": [ {"name","amount"} ],
-
-  "confidence": "...", "disclaimer": "..."
-
-}
-
-═══ SAMPLE RECORD (use to build against) ═══
-
-{
-
- "event": {"name":"Strait of Hormuz closure",
-
-   "information_date":"28 Feb 2026","announcement_date":"4 Mar 2026",
-
-   "type_label":"energy supply shock",
-
-   "key_metrics":[{"label":"Brent oil","value":"$126","tone":"neutral"},
-
-                  {"label":"S&P 500","value":"-2.2%","tone":"loss"}]},
-
- "sources":["IRGC","Reuters","vessel-tracking"], "status":"confirmed",
-
- "recency":"settled",
-
- "summary":"When the Strait closed, oil, shipping, defense and gold stocks
-
-   rose and airlines fell — the textbook reaction to an energy-supply shock.
-
-   The moves pointed the right way but over the first week most were within
-
-   normal market swings. The one clear, lasting effect was a ~9% drop in
-
-   airline stocks that held for weeks. Energy and gold gains faded after the
-
-   8 April ceasefire.",
-
- "reaction":[
-
-   {"sector":"Oil tanker operators","tickers":"STNG, FRO, INSW","pct":"+6.2%","significant":false,"tone":"gain"},
-
-   {"sector":"Oil & gas producers","tickers":"XOM, CVX, COP","pct":"+3.2%","significant":false,"tone":"gain"},
-
-   {"sector":"Defense contractors","tickers":"LMT, RTX, NOC","pct":"+2.6%","significant":false,"tone":"gain"},
-
-   {"sector":"Gold","tickers":"GLD","pct":"+2.1%","significant":false,"tone":"gain"},
-
-   {"sector":"Airline stocks","tickers":"DAL, UAL, AAL","pct":"-9.0%","significant":false,"tone":"loss"}],
-
- "lasting_finding":"Over the following weeks airline stocks fell about 9% and
-
-   stayed down — the only move large and consistent enough to be reliable.",
-
- "historical":[
-
-   {"sector":"Oil & gas","usual":"Rises (supply fear)","this_event":"Rose","match":true},
-
-   {"sector":"Defense","usual":"Rises (conflict)","this_event":"Rose","match":true},
-
-   {"sector":"Gold","usual":"Rises (safe haven)","this_event":"Rose","match":true},
-
-   {"sector":"Airlines","usual":"Falls (fuel cost)","this_event":"Fell","match":true},
-
-   {"sector":"Tankers","usual":"Mixed (route-dependent)","this_event":"Rose","match":false}],
-
- "companies_affected":[{"ticker":"STNG","tone":"gain"},{"ticker":"XOM","tone":"gain"},
-
-   {"ticker":"LMT","tone":"gain"},{"ticker":"GLD","tone":"gain"},{"ticker":"JETS","tone":"loss"}],
-
- "companies_named":[{"name":"Lockheed Martin","amount":"$1.3B"},
-
-   {"name":"RTX","amount":"$1.0B"},{"name":"Northrop Grumman","amount":"$0.7B"}],
-
- "confidence":"Few directly comparable past events; figures strip out the
-
-   market's own move; the short one-week window limits how reliably small
-
-   moves can be judged.",
-
- "disclaimer":"This tool informs your decision. It does not give investment advice."
-
-}
-
-═══ DESIGN ═══
-
-- Dark "intelligence terminal" theme: charcoal canvas #161512, panels
-
-  #1F1E18, borders #312F28, off-white text #ECEAE3, secondary grey #9E9B90,
-
-  muted #6F6C63.
-
-- Accent colors ONLY where they carry meaning: amber #EF9F27 (energy/oil),
-
-  teal #1D9E75 (gains), red #E24B4A (losses/disruption).
-
-- All numbers in a monospace font; headings and body in a clean sans-serif.
-
-- Flat, restrained, professional — Bloomberg-terminal feel. No glows or
-
-  gradients.
-
-- Plain English leads every label; technical terms appear as small captions.
-
-- Mobile-responsive.
-
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/a90a1e40-1576-46d7-ac30-70cb4602a430).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+- **React** with Vite
+- **Recharts** for charts
+- **react-simple-maps** for regional map backgrounds
+- **Supabase JS client**, read-only, for data
+- **Vercel** for deployment
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Requires Node.js and npm. [Install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
+git clone https://github.com/mutazhammad/aftershock_site
+cd aftershock_site
 npm i
 npm run dev
 ```
+
+The app reads from Supabase using a publishable key with read-only access. Nothing writes to the database from the frontend.
+
+## Built with Lovable
+
+Scaffolded in [Lovable](https://lovable.dev), then deployed independently on Vercel. Changes pushed to `main` sync back into the Lovable editor.
+
+## Disclaimer
+
+Aftershock does not predict markets and does not give investment advice. A disclaimer appears on every report it produces.
