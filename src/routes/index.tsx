@@ -69,7 +69,7 @@ function LandingPage() {
       <TopNav />
 
       {/* HERO */}
-      <section className="relative flex min-h-[100vh] items-center justify-center overflow-hidden pt-20">
+      <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden pt-20">
         <HeroMap markers={locs} />
 
         {/* Radial signal glow behind the headline */}
@@ -77,13 +77,13 @@ function LandingPage() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse at 50% 45%, rgba(63,169,245,0.22), rgba(63,169,245,0.05) 30%, transparent 60%)",
+              "radial-gradient(ellipse at 50% 45%, rgba(63,169,245,0.10), rgba(63,169,245,0.03) 30%, transparent 60%)",
           }}
           aria-hidden
         />
 
         <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center px-5 text-center animate-fade-rise">
-          <div className="mono flex items-center gap-2 text-[10.5px] uppercase tracking-[0.28em] text-signal">
+          <div className="mono flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[11px] uppercase tracking-[0.2em] text-signal sm:tracking-[0.28em]">
             <span className="relative flex h-2 w-2">
               <span className="absolute inset-0 rounded-full bg-signal opacity-70 animate-ambient" />
               <span className="relative h-2 w-2 rounded-full bg-signal" />
@@ -102,38 +102,39 @@ function LandingPage() {
           </div>
 
           <h1
-            className="display mt-6 text-[clamp(3.5rem,11vw,10rem)] leading-[0.88] tracking-[-0.02em] text-bone"
-            style={{ textShadow: "0 0 60px rgba(63,169,245,0.25)" }}
+            className="display mt-6 text-[clamp(2.5rem,8.6vw,7.5rem)] leading-[0.92] tracking-[-0.005em] text-bone"
+            style={{ textShadow: "0 0 45px rgba(63,169,245,0.14)" }}
           >
-            Panic Is Not
+            Conflict Has A Price
             <br />
-            A Strategy
+            This Measures It
           </h1>
 
           <div className="animate-draw-rule mt-8 h-px w-56 bg-signal/70" />
 
-          <p className="mt-8 max-w-2xl text-[15px] leading-relaxed text-bone/85 md:text-[17px]">
-            A blockade closes. Sanctions land. Missiles fly. Aftershock tells you which
-            sectors move, by how much, and what history says happens next.
+          <p className="measure mt-8 text-[15px] leading-relaxed text-bone/85 md:text-[17px]">
+            When a strait closes or sanctions land, Aftershock measures which sectors moved
+            in comparable past events, by how much, and whether the move was statistically
+            real.
           </p>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-10 flex w-full max-w-sm flex-col items-stretch gap-3 sm:w-auto sm:max-w-none sm:flex-row sm:items-center sm:justify-center">
             <Link
               to="/events"
-              className="mono inline-flex items-center gap-2 border border-signal bg-signal/15 px-5 py-3 text-[12px] uppercase tracking-[0.2em] text-signal transition-colors hover:bg-signal/25 hover:text-ice"
+              className="mono inline-flex min-h-[48px] items-center justify-center gap-2 border border-signal bg-signal/15 px-5 py-3 text-[12px] uppercase tracking-[0.2em] text-signal transition-colors hover:bg-signal/25 hover:text-ice"
               style={{ boxShadow: "0 0 40px rgba(63,169,245,0.15)" }}
             >
               View The Events →
             </Link>
             <Link
               to="/methodology"
-              className="mono inline-flex items-center gap-2 border border-steel px-5 py-3 text-[12px] uppercase tracking-[0.2em] text-bone/80 transition-colors hover:border-signal/60 hover:text-ice"
+              className="mono inline-flex min-h-[48px] items-center justify-center gap-2 border border-steel px-5 py-3 text-[12px] uppercase tracking-[0.2em] text-bone/80 transition-colors hover:border-signal/60 hover:text-ice"
             >
               Methodology
             </Link>
           </div>
 
-          <div className="mono mt-14 text-[10px] uppercase tracking-[0.28em] text-ash/70">
+          <div className="mono mt-12 text-[10px] uppercase tracking-[0.28em] text-ash/70">
             ↓ Scroll
           </div>
         </div>
