@@ -373,7 +373,7 @@ function EventReport() {
       <KeyTakeaway e={e} />
 
       {e.summary && (
-        <section className="mt-10">
+        <section className="mt-14 sm:mt-16">
           <SectionTitle n="01" title="What Happened" />
           <p className="max-w-3xl text-[14.5px] leading-[1.75] text-text-primary whitespace-pre-line">
             {e.summary}
@@ -382,7 +382,7 @@ function EventReport() {
       )}
 
       {dia && (
-        <section className="mt-10">
+        <section className="mt-14 sm:mt-16">
           <SectionTitle
             n="02"
             title="Can These Numbers Be Trusted"
@@ -409,7 +409,7 @@ function EventReport() {
       </div>
 
       {e.transmission_mechanism && (
-        <section className="mt-10">
+        <section className="mt-14 sm:mt-16">
           <SectionTitle
             n="03"
             title="How This Reaches Markets"
@@ -424,7 +424,7 @@ function EventReport() {
       )}
 
       {e.companies_involved && e.companies_involved.length > 0 && (
-        <section className="mt-10">
+        <section className="mt-14 sm:mt-16">
           <SectionTitle
             n="04"
             title="Companies Involved"
@@ -479,14 +479,14 @@ function EventReport() {
       )}
 
       {e.timeline && e.timeline.length > 0 && (
-        <section className="mt-10">
+        <section className="mt-14 sm:mt-16">
           <SectionTitle n="02" title="Event Timeline" sub="key moments" />
           <Timeline entries={e.timeline} />
         </section>
       )}
 
       {isBreaking && pe && (
-        <section className="mt-10">
+        <section className="mt-14 sm:mt-16">
           <SectionTitle
             n="03"
             title="What Similar Events Have Done"
@@ -670,7 +670,7 @@ function EventReport() {
       )}
 
       {showNoPrecedents && (
-        <section className="mt-10">
+        <section className="mt-14 sm:mt-16">
           <div className="border border-steel bg-panel p-6">
             <h2 className="display text-[20px] tracking-wide text-ash">
               No Validated Precedents
@@ -695,7 +695,7 @@ function EventReport() {
       {notes &&
         (notes.overall_applicability ||
           (notes.notes && notes.notes.length > 0)) && (
-          <section className="mt-10">
+          <section className="mt-14 sm:mt-16">
             <SectionTitle
               n="06"
               title="What Has Changed Since"
@@ -710,7 +710,7 @@ function EventReport() {
           </section>
         )}
 
-      <section className="mt-10">
+      <section className="mt-14 sm:mt-16">
         <SectionTitle n="04" title="How To Read This" />
         <div className="border border-hairline bg-panel p-4">
           <p className="text-[13px] leading-relaxed text-text-secondary">
@@ -738,7 +738,7 @@ function EventReport() {
       </section>
 
       {(showChart || showReactionBars) && (
-        <section className="mt-10">
+        <section className="mt-14 sm:mt-16">
           <SectionTitle n="05" title="Market Reaction" sub="vs S&P 500" />
 
           {showChart && e.timeseries && (
@@ -797,7 +797,7 @@ function EventReport() {
       )}
 
       {!isBreaking && e.volatility && (e.volatility.vix || e.volatility.sectors?.length) && (
-        <section className="mt-10">
+        <section className="mt-14 sm:mt-16">
           <SectionTitle
             n="06"
             title="Volatility"
@@ -822,7 +822,7 @@ function EventReport() {
       )}
 
       {!isBreaking && e.phases && e.phases.length > 0 && (
-        <section className="mt-10">
+        <section className="mt-14 sm:mt-16">
           <SectionTitle n="07" title="Phases" sub="peak move and reversion" />
           <div className="overflow-x-auto border border-hairline">
             <table className="w-full text-left text-[13px]">
@@ -872,7 +872,7 @@ function EventReport() {
       )}
 
       {e.historical && e.historical.length > 0 && (
-        <section className="mt-10">
+        <section className="mt-14 sm:mt-16">
           <SectionTitle n="08" title="Historical Context" sub="usual pattern vs this event" />
           <div className="overflow-x-auto border border-hairline">
             <table className="w-full text-left text-[13px]">
@@ -917,7 +917,7 @@ function EventReport() {
       )}
 
       {precedents.length > 0 && (
-        <section className="mt-10">
+        <section className="mt-14 sm:mt-16">
           <SectionTitle
             n="09"
             title="Historical Precedents"
@@ -929,7 +929,7 @@ function EventReport() {
         </section>
       )}
 
-      <section className="mt-10 grid gap-6 md:grid-cols-2">
+      <section className="mt-14 sm:mt-16 grid gap-6 md:grid-cols-2">
         {!isBreaking && e.companies_affected && e.companies_affected.length > 0 && (
           <div>
             <SectionTitle n="10a" title="Companies Most Affected" sub="measured moves" />
@@ -962,7 +962,7 @@ function EventReport() {
         )}
       </section>
 
-      <section className="mt-10 border border-hairline bg-panel p-5">
+      <section className="mt-14 border-t border-hairline pt-6 sm:mt-16">
         {e.confidence && (
           <>
             <div className="mono text-[10px] uppercase tracking-[0.16em] text-text-muted">
