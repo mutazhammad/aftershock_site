@@ -2,6 +2,7 @@ import { WordmarkCompact, WordmarkFull } from "@/components/chokepoint/Brand";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Chrome } from "@/components/chokepoint/Chrome";
+import { MobileNav } from "@/components/chokepoint/MobileNav";
 import { HeroMap } from "@/components/chokepoint/HeroMap";
 import { RecencyBadge, StatusBadge, TypeChip } from "@/components/chokepoint/Badges";
 import {
