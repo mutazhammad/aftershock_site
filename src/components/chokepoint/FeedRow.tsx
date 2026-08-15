@@ -228,10 +228,10 @@ export function FeedRow({ item, index }: { item: FeedItem; index: number }) {
               {typeLabel ? ` · ${typeLabel}` : ""}
               {region ? ` · ${String(region).toUpperCase()}` : ""}
             </div>
-            <h2 className="display mt-2 text-[clamp(1.35rem,2.6vw,1.9rem)] leading-tight text-bone group-hover:text-ice">
+            <h2 className="display mt-2 text-[1.3rem] leading-tight text-bone group-hover:text-ice sm:text-[clamp(1.35rem,2.6vw,1.9rem)]">
               {item.name}
             </h2>
-            <div className="mono mt-2 flex flex-wrap items-center gap-x-1 text-[12px]">
+            <div className="mono mt-2 flex flex-wrap items-center gap-x-1 gap-y-1 text-[12px] leading-relaxed">
               {item.recency === "breaking" && <BreakingPreview data={d} />}
               {item.recency === "developing" && <DevelopingPreview data={d} />}
               {item.recency === "settled" && <SettledPreview data={d} />}
