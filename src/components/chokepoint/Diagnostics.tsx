@@ -22,7 +22,7 @@ export function DiagnosticsBlock({
         <p className="max-w-3xl text-[16px] leading-[1.7] text-bone">{d.summary}</p>
       )}
       {d.date_basis && (
-        <p className="max-w-3xl text-[13px] leading-relaxed text-ash">{d.date_basis}</p>
+        <p className="max-w-3xl text-[14.5px] leading-relaxed text-ash">{d.date_basis}</p>
       )}
 
       <div>
@@ -30,7 +30,7 @@ export function DiagnosticsBlock({
           Single-Name Concentration
         </div>
         {concentration.length === 0 ? (
-          <p className="text-[13px] leading-relaxed text-ash">
+          <p className="text-[14.5px] leading-relaxed text-ash">
             No sector result was dominated by a single constituent.
           </p>
         ) : (
@@ -52,7 +52,7 @@ export function DiagnosticsBlock({
                     {c.share} one name
                   </span>
                 </div>
-                <p className="mt-1.5 text-[12.5px] leading-relaxed text-text-secondary">
+                <p className="mt-1.5 text-[14px] leading-relaxed text-text-secondary">
                   {c.detail}
                 </p>
               </Link>
@@ -95,7 +95,7 @@ export function DiagnosticsBlock({
                     </span>
                   </div>
                   <p
-                    className={`mt-1.5 text-[12.5px] leading-relaxed ${
+                    className={`mt-1.5 text-[14px] leading-relaxed ${
                       c.clean ? "text-ash" : "text-text-secondary"
                     }`}
                   >
@@ -115,7 +115,7 @@ export function DiagnosticsBlock({
           </div>
           <ul className="space-y-1.5">
             {anticipation.map((a, i) => (
-              <li key={i} className="text-[12.5px] leading-relaxed text-ash">
+              <li key={i} className="text-[14px] leading-relaxed text-ash">
                 <span className="mono text-[11.5px] text-text-secondary">
                   {a.precedent}
                 </span>{" "}

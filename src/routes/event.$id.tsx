@@ -232,7 +232,7 @@ function TransparencyCard({
   const inner = (
     <div className="border border-hairline bg-panel p-4">
       <div className="mono text-[10px] uppercase tracking-[0.16em] text-amber">{label}</div>
-      <p className="mt-1 text-[13px] leading-relaxed text-text-primary">{text}</p>
+      <p className="mt-1 text-[14.5px] leading-relaxed text-text-primary">{text}</p>
       {linkHash && (
         <span className="mono mt-2 block text-[10px] uppercase tracking-[0.14em] text-signal underline decoration-dotted underline-offset-2">
           Read how dates work →
@@ -461,7 +461,7 @@ function EventReport() {
           <div className="mono text-[10px] uppercase tracking-[0.16em] text-amber">
             Market Reaction Not Yet Measured
           </div>
-          <p className="mt-1 text-[13px] leading-relaxed text-text-primary">
+          <p className="mt-1 text-[14.5px] leading-relaxed text-text-primary">
             This event is too recent. The analysis below is what actually happened in
             comparable historical events. This report deepens automatically as market data
             accumulates.
@@ -473,7 +473,7 @@ function EventReport() {
           <div className="mono text-[10px] uppercase tracking-[0.16em] text-blue">
             Developing, Provisional Numbers
           </div>
-          <p className="mt-1 text-[13px] leading-relaxed text-text-primary">
+          <p className="mt-1 text-[14.5px] leading-relaxed text-text-primary">
             Partial reaction shown. Significance flags are marked provisional and may change
             as more price data accumulates.
           </p>
@@ -526,7 +526,7 @@ function EventReport() {
                 <Caption>Average move across all validated precedents.</Caption>
               </div>
 
-              <p className="max-w-3xl text-[13px] leading-relaxed text-text-secondary">
+              <p className="max-w-3xl text-[14.5px] leading-relaxed text-text-secondary">
                 {precedentSpreadProse(pe)}
               </p>
 
@@ -663,7 +663,7 @@ function EventReport() {
               <div className="mono text-[10px] uppercase tracking-[0.16em] text-amber">
                 Important Caveat
               </div>
-              <p className="mt-1 text-[13px] leading-relaxed text-text-primary">
+              <p className="mt-1 text-[14.5px] leading-relaxed text-text-primary">
                 {pe.caveat}
               </p>
             </div>
@@ -677,7 +677,7 @@ function EventReport() {
             <h2 className="display text-[20px] tracking-wide text-ash">
               No Validated Precedents
             </h2>
-            <p className="mt-3 max-w-3xl text-[13.5px] leading-relaxed text-ash">
+            <p className="mt-3 max-w-3xl text-[14.5px] leading-relaxed text-ash">
               The system researched historical parallels for this event and measured each
               one against market data. None survived validation. A precedent is only used
               when its own measurement holds up, so this report carries no historical
@@ -715,7 +715,7 @@ function EventReport() {
       <section className="mt-14 sm:mt-16">
         <SectionTitle n="04" title="How To Read This" />
         <div className="border border-hairline bg-panel p-4">
-          <p className="text-[13px] leading-relaxed text-text-secondary">
+          <p className="text-[14.5px] leading-relaxed text-text-secondary">
             Each sector below is a basket of named stocks. The percentage shown is the move{" "}
             <span className="text-text-primary">
               beyond the overall market (S&amp;P 500)
@@ -780,7 +780,7 @@ function EventReport() {
           )}
 
           {showReactionBars && (
-            <p className="mt-3 max-w-3xl text-[13px] leading-relaxed text-text-secondary">
+            <p className="mt-3 max-w-3xl text-[14.5px] leading-relaxed text-text-secondary">
               {reactionProse(e.reaction, e.event.type_label)}
             </p>
           )}
@@ -790,7 +790,7 @@ function EventReport() {
               <div className="mono text-[10px] uppercase tracking-[0.16em] text-amber">
                 Lasting Finding
               </div>
-              <p className="mt-1 text-[13.5px] leading-relaxed text-text-primary">
+              <p className="mt-1 text-[14.5px] leading-relaxed text-text-primary">
                 {e.lasting_finding}
               </p>
             </div>
@@ -813,7 +813,7 @@ function EventReport() {
           </p>
           <VolatilityBlock v={e.volatility} />
           {(e.volatility.vix || e.volatility.sectors?.length) && (
-            <div className="mt-3 max-w-3xl space-y-2 text-[13px] leading-relaxed text-text-secondary">
+            <div className="mt-3 max-w-3xl space-y-2 text-[14.5px] leading-relaxed text-text-secondary">
               {e.volatility.vix && <p>{vixProse(e.volatility.vix)}</p>}
               {e.volatility.sectors && e.volatility.sectors.length > 0 && (
                 <p>{volSectorsProse(e.volatility.sectors)}</p>
@@ -867,7 +867,7 @@ function EventReport() {
               </tbody>
             </table>
           </div>
-          <p className="mt-3 max-w-3xl text-[13px] leading-relaxed text-text-secondary">
+          <p className="mt-3 max-w-3xl text-[14.5px] leading-relaxed text-text-secondary">
             {phasesProse(e.phases)}
           </p>
         </section>
@@ -970,7 +970,7 @@ function EventReport() {
             <div className="mono text-[10px] uppercase tracking-[0.16em] text-text-muted">
               Confidence
             </div>
-            <p className="mt-1 text-[13px] leading-relaxed text-text-secondary">
+            <p className="mt-1 text-[14.5px] leading-relaxed text-text-secondary">
               {e.confidence}
             </p>
           </>

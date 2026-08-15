@@ -35,7 +35,7 @@ export function ImportantNotesBlock({
           <div className="mono text-[10px] uppercase tracking-[0.16em] text-signal">
             Overall Applicability
           </div>
-          <p className="mt-2 text-[13.5px] leading-relaxed text-text-primary">
+          <p className="mt-2 text-[14.5px] leading-relaxed text-text-primary">
             {notes.overall_applicability}
           </p>
         </div>
@@ -63,7 +63,7 @@ export function ImportantNotesBlock({
                   {CAT_LABEL[n.category] ?? n.category}
                 </span>
               </div>
-              <p className="mt-3 text-[13px] leading-relaxed text-text-secondary">
+              <p className="mt-3 text-[14.5px] leading-relaxed text-text-secondary">
                 {n.detail}
               </p>
               {n.affects && n.affects.length > 0 && (

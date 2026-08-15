@@ -36,7 +36,7 @@ export function PrecedentsList({ items }: { items: HistoricalPrecedent[] }) {
             </button>
             {isOpen && (
               <div className="border-t border-hairline bg-canvas/40 px-4 py-3">
-                <p className="text-[13px] leading-relaxed text-text-primary">{p.mini.summary}</p>
+                <p className="text-[14.5px] leading-relaxed text-text-primary">{p.mini.summary}</p>
 
                 {p.mini.timeseries && (
                   <div className="mt-3">
